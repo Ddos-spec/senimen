@@ -1,18 +1,218 @@
 ---
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MediaSlot from '../components/MediaSlot.astro';
+import { highlights, social, spaces, ticker, visualNotes } from '../data/site';
 
-const legacyHtml = await readFile(resolve(process.cwd(), 'index.html'), 'utf8');
-const base = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
-
-const html = legacyHtml
-  .replace('href="./styles.css"', `href="${base}styles.css"`)
-  .replace('href="./brand.css"', `href="${base}brand.css"`)
-  .replace('href="./media.css"', `href="${base}media.css"`)
-  .replace('src="./app.js"', `src="${base}app.js"`)
-  .replaceAll('./public/', base);
+const doubledTicker = [...ticker, ...ticker];
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
 
-<Fragment set:html={html} />
+<BaseLayout>
+  <header class="site-header" data-header>
+    <a class="brand magnetic" href="#top" aria-label="Senimen, kembali ke atas">
+      <span class="brand-mark">S</span>
+      <span class="brand-word">SENIMEN</span>
+    </a>
+    <div class="header-meta">
+      <span>PROCESS / PERSPECTIVE / EXPRESSION</span>
+      <span class="desktop-only">TANGERANG</span>
+    </div>
+    <button class="menu-toggle magnetic" aria-expanded="false" aria-controls="site-menu">
+      <span>MENU</span><i></i>
+    </button>
+  </header>
+
+  <nav class="menu" id="site-menu" aria-hidden="true">
+    <div class="menu-noise"></div>
+    <div class="menu-index">INDEX / 001—006</div>
+    <a href="#about" data-menu-link><span>01</span> Tentang</a>
+    <a href="#archive" data-menu-link><span>02</span> Arsip</a>
+    <a href="#visual-notes" data-menu-link><span>03</span> Visual</a>
+    <a href="#spaces" data-menu-link><span>04</span> Ruang</a>
+    <a href={`${base}archive/`} data-menu-link><span>05</span> Index</a>
+    <a href="#join" data-menu-link><span>06</span> Gabung</a>
+    <a class="menu-instagram" href={social.instagram} target="_blank" rel="noreferrer">Instagram ↗</a>
+  </nav>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-kicker reveal">
+        <span>KOMUNITAS SENI & KREATIF INDEPENDEN</span>
+        <span>TANGERANG / INDONESIA</span>
+      </div>
+
+      <div class="hero-title-wrap">
+        <h1 id="hero-title" class="hero-title" aria-label="Senimen">
+          <span class="hero-line line-a" data-speed="0.05">SENI</span>
+          <span class="hero-line line-b" data-speed="-0.04">MEN</span>
+        </h1>
+        <div class="hero-stamp reveal">
+          <span>KOLAB</span>
+          <span>TUMBUH</span>
+          <span>BARENG</span>
+        </div>
+      </div>
+
+      <div class="hero-bottom">
+        <p class="hero-copy reveal">
+          Wadah untuk para seniman. Dokumentasi proses, perspektif, dan ekspresi—dibangun sebagai ruang untuk berkolaborasi dan tumbuh bareng.
+        </p>
+        <a class="round-link magnetic reveal" href="#archive" aria-label="Masuk ke arsip">
+          <span>MASUK</span><b>↓</b>
+        </a>
+      </div>
+
+      <div class="hero-media">
+        <MediaSlot
+          src="images/carousel_all/slide_20.jpg"
+          alt="Dokumentasi visual Senimen"
+          className="media-slot--hero"
+          priority={true}
+          slotId="hero"
+          labelLeft="SENIMEN / ARCHIVE"
+          labelRight="TANGERANG"
+        />
+      </div>
+    </section>
+
+    <section class="ticker" aria-label="Senimen ticker">
+      <div class="ticker-track">
+        {doubledTicker.map((item) => <><span>{item}</span><i>✦</i></>)}
+      </div>
+    </section>
+
+    <section class="manifesto section" id="about">
+      <div class="section-index reveal">01 / SENIMEN?</div>
+      <div class="manifesto-grid">
+        <h2 class="display reveal-split">KARYA TIDAK<br />LAHIR SENDIRIAN.</h2>
+        <div class="manifesto-copy">
+          <p class="lead reveal">Senimen hadir sebagai wadah seni dan kreatif independen—tempat proses tidak harus disembunyikan sampai semuanya terlihat “jadi”.</p>
+          <p class="reveal">Dokumentasi, perspektif, dan ekspresi menjadi bagian dari identitasnya. Ruang digital ini menyusun kembali jejak karya, acara, percakapan, dan pertemuan yang tumbuh bersama komunitas.</p>
+        </div>
+      </div>
+      <div class="manifesto-word" aria-hidden="true">BARENG</div>
+    </section>
+
+    <section class="archive section" id="archive">
+      <div class="section-head">
+        <div>
+          <div class="section-index reveal">02 / LIVING ARCHIVE</div>
+          <h2 class="display reveal-split">BUKAN FEED.<br />INI JEJAK.</h2>
+        </div>
+        <p class="section-note reveal">Ratusan frame dokumentasi Senimen dikurasi menjadi arsip hidup. Bukan seluruh file ditumpuk ke satu halaman: tiap visual dipilih supaya ritme, cerita, dan performa web tetap terjaga.</p>
+      </div>
+
+      <div class="archive-grid">
+        {highlights.map((item) => (
+          <article class={`archive-card ${item.className} reveal-card`}>
+            <MediaSlot src={item.image} alt={item.alt} className={item.mediaClass} slotId={item.no} />
+            <div class="archive-meta"><span>{item.no} / {item.meta}</span><span>ARCHIVE FRAME</span></div>
+            <h3>{item.title}</h3>
+          </article>
+        ))}
+      </div>
+
+      <div class="archive-index-link reveal">
+        <a class="pill-link magnetic" href={`${base}archive/`}>
+          <span>BUKA INDEX VISUAL</span><b>↗</b>
+        </a>
+      </div>
+    </section>
+
+    <section class="visual-notes" id="visual-notes">
+      <div class="visual-notes-head">
+        <div>
+          <div class="section-index reveal">03 / VISUAL NOTES</div>
+          <h2 class="display reveal-split">PROSES PUNYA<br />WAJAH.</h2>
+        </div>
+        <p class="visual-notes-copy reveal">Potongan dokumentasi diperlakukan seperti halaman majalah yang terus bergerak: tidak seragam, tidak dipaksa jadi grid Instagram, dan tidak kehilangan tekstur aslinya.</p>
+      </div>
+
+      <div class="visual-wall" aria-label="Kurasi visual Senimen">
+        {visualNotes.map((item) => (
+          <figure class="visual-frame reveal-card">
+            <MediaSlot src={item.image} alt={item.alt} />
+            <figcaption class="visual-frame-tag">{item.label}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <p class="visual-wall-caption reveal">SELECTED FROM SENIMEN'S COLLECTIVE ARCHIVE / TANGERANG / PROCESS, PERSPECTIVE, EXPRESSION.</p>
+    </section>
+
+    <section class="statement" aria-label="Pernyataan Senimen">
+      <div class="statement-pin">
+        <p class="statement-small">SENIMEN / TANGERANG</p>
+        <p class="statement-big">KOLAB<br />KONTRIBUSI<br /><em>EKSPRESI.</em></p>
+      </div>
+      <div class="statement-side">
+        <span>ART / PROCESS / PEOPLE</span>
+        <span>KEEP SCROLLING</span>
+      </div>
+    </section>
+
+    <section class="spaces section" id="spaces">
+      <div class="section-index reveal">04 / RUANG SENIMEN</div>
+      <div class="spaces-intro">
+        <h2 class="display reveal-split">SATU KOMUNITAS.<br />BANYAK JALAN.</h2>
+        <p class="reveal">Karya, event, arsip, percakapan, dan kolaborasi punya jalurnya sendiri tetapi tetap hidup di bawah satu identitas Senimen.</p>
+      </div>
+
+      <div class="space-list">
+        {spaces.map((item) => (
+          <a href={item.href} target={item.external ? '_blank' : undefined} rel={item.external ? 'noreferrer' : undefined} class="space-row magnetic-row">
+            <span class="space-no">{item.no}</span>
+            <span class="space-name">{item.name}</span>
+            <span class="space-desc">{item.description}</span>
+            <span class="space-arrow">↗</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="intermission">
+      <div class="intermission-media media-reel-placeholder">
+        <MediaSlot src="images/carousel_all/slide_110.jpg" alt="Dokumentasi Senimen full bleed" className="media-slot--intermission" slotId="05" />
+        <span class="intermission-caption">SENIMEN ARCHIVE / MOVING IMAGE LAYER</span>
+      </div>
+      <p class="intermission-title" data-speed="0.03">WAKTUNYA KOLAB.</p>
+    </section>
+
+    <section class="join section" id="join">
+      <div class="join-top">
+        <div class="section-index reveal">05 / BERGABUNG</div>
+        <span class="join-code reveal">IG / @KOMUNITAS_SENIMEN</span>
+      </div>
+      <div class="join-grid">
+        <h2 class="join-title reveal-split">TUMBUH<br />BARENG.</h2>
+        <div class="join-action reveal">
+          <p>Ikuti ruang sosialnya, kirim karya, atau buka percakapan untuk kolaborasi. Tidak ada formulir panjang yang pura-pura menjadi “community onboarding”.</p>
+          <a class="pill-link magnetic" href={social.instagram} target="_blank" rel="noreferrer"><span>BUKA INSTAGRAM</span><b>↗</b></a>
+          <a class="pill-link magnetic" style="margin-top:10px" href={social.submit} target="_blank" rel="noreferrer"><span>SUBMIT KARYA</span><b>↗</b></a>
+          <a class="pill-link magnetic" style="margin-top:10px" href={social.whatsapp} target="_blank" rel="noreferrer"><span>HUBUNGI ADMIN</span><b>↗</b></a>
+        </div>
+      </div>
+      <footer>
+        <div class="footer-brand">SENIMEN®</div>
+        <div class="footer-meta"><span>TANGERANG, BANTEN</span><span>SENIMEN UNTUK SENI</span><span>{social.email}</span></div>
+        <a href="#top">BACK TO TOP ↑</a>
+      </footer>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .archive-index-link {
+    margin-top: 72px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .hero-media :global(.media-slot) {
+    height: 100%;
+  }
+
+  .intermission-media :global(.media-slot) {
+    position: absolute;
+    inset: 0;
+  }
+</style>
