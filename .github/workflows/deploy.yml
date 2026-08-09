@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Build Astro site
         run: npm run build
 
