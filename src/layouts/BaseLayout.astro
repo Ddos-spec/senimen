@@ -1,20 +1,27 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import '../../styles.css';
 import '../../brand.css';
 import '../../media.css';
+import '../styles/rebuild.css';
 
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
 const {
   title = 'SENIMEN — Komunitas Seni & Kreatif Independen',
-  description = 'SENIMEN — Komunitas Seni & Kreatif Independen di Tangerang. Dokumentasi proses, perspektif, ekspresi, dan kolaborasi.',
+  description = 'SENIMEN — Komunitas Seni & Kreatif Independen di Tangerang. Dokumentasi proses, perspektif, ekspresi, kolaborasi, arsip visual, dan tulisan edukasi.',
+  image,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const socialImage = image ? new URL(`${base}${image.replace(/^\/+/, '')}`, Astro.site) : undefined;
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -22,7 +29,11 @@ const schema = {
   description,
   url: canonical.origin,
   email: 'senimenuntukseni@gmail.com',
-  sameAs: ['https://www.instagram.com/komunitas_senimen/'],
+  sameAs: [
+    'https://www.instagram.com/komunitas_senimen/',
+    'https://www.tiktok.com/@komunitas_senimen',
+    'https://www.threads.net/@komunitas_senimen',
+  ],
   areaServed: 'Tangerang, Banten, Indonesia',
 };
 ---
@@ -39,6 +50,7 @@ const schema = {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
@@ -49,7 +61,9 @@ const schema = {
     <div class="noise" aria-hidden="true"></div>
     <div class="cursor" aria-hidden="true"><span></span></div>
     <div class="progress" aria-hidden="true"><i></i></div>
+    <SiteHeader />
     <slot />
+    <SiteFooter />
     <script>
       import '../scripts/site.ts';
     </script>
