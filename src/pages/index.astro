@@ -1,0 +1,18 @@
+---
+import { readFile } from 'node:fs/promises';
+
+const legacyPath = new URL('../../index.html', import.meta.url);
+const legacyHtml = await readFile(legacyPath, 'utf8');
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
+const html = legacyHtml
+  .replace('href="./styles.css"', `href="${base}styles.css"`)
+  .replace('href="./brand.css"', `href="${base}brand.css"`)
+  .replace('href="./media.css"', `href="${base}media.css"`)
+  .replace('src="./app.js"', `src="${base}app.js"`)
+  .replaceAll('./public/', base);
+---
+
+<Fragment set:html={html} />
