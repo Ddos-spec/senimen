@@ -1,24 +1,25 @@
 {
   "name": "senimen",
-  "version": "1.0.0",
-  "description": "Repositori resmi untuk proyek **Senimen**.",
-  "main": "scrape_ig.js",
+  "version": "2.0.0",
+  "private": true,
+  "description": "SENIMEN — komunitas seni & kreatif independen Tangerang.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build && node scripts/postbuild.mjs",
+    "preview": "astro preview"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ddos-spec/senimen.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Ddos-spec/senimen/issues"
+  "engines": {
+    "node": ">=24"
   },
-  "homepage": "https://github.com/Ddos-spec/senimen#readme",
   "dependencies": {
+    "astro": "^7.1.5",
     "playwright": "^1.62.1"
   }
 }
