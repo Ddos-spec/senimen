@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { social } from '../data/site';
+---
+<BaseLayout title="Gabung & Kolaborasi — SENIMEN" description="Gabung, kirim karya, hubungi admin, atau buka kolaborasi dengan SENIMEN.">
+  <main class="page join-page">
+    <section class="route-hero">
+      <div class="route-hero-grid">
+        <div><span class="page-kicker">BERGABUNG / KOLABORASI</span><h1 class="page-title">TUMBUH<br />BARENG.</h1></div>
+        <p class="page-lead">Tidak perlu alur onboarding yang dibuat rumit. Pilih jalur yang sesuai: lihat komunitasnya, kirim karya ke arsip, atau langsung buka percakapan.</p>
+      </div>
+    </section>
+
+    <section class="join-actions">
+      <div><span class="page-kicker">PILIH JALUR</span><h2>MASUK KE<br />RUANGNYA.</h2></div>
+      <div class="join-links">
+        <a class="join-link" href={social.instagram} target="_blank" rel="noreferrer"><span>INSTAGRAM / @KOMUNITAS_SENIMEN</span><span>↗</span></a>
+        <a class="join-link" href={social.submit} target="_blank" rel="noreferrer"><span>SUBMIT KARYA / ARSIP KOLEKTIF</span><span>↗</span></a>
+        <a class="join-link" href={social.whatsapp} target="_blank" rel="noreferrer"><span>WHATSAPP / HUBUNGI ADMIN</span><span>↗</span></a>
+        <a class="join-link" href={`mailto:${social.email}`}><span>EMAIL / {social.email}</span><span>↗</span></a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
