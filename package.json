@@ -1,0 +1,24 @@
+{
+  "name": "senimen",
+  "version": "1.0.0",
+  "description": "Repositori resmi untuk proyek **Senimen**.",
+  "main": "scrape_ig.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ddos-spec/senimen.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ddos-spec/senimen/issues"
+  },
+  "homepage": "https://github.com/Ddos-spec/senimen#readme",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}
