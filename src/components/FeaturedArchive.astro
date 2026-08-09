@@ -1,0 +1,22 @@
+---
+import MediaSlot from './MediaSlot.astro';
+import { featuredSlides } from '../data/media';
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<section class="featured-strip">
+  <div class="featured-head">
+    <div>
+      <div class="page-kicker">02 / SELECTED ARCHIVE</div>
+      <h2>MEDIA ASLI.<br />BUKAN PLACEHOLDER.</h2>
+    </div>
+    <a class="action-link magnetic" href={`${base}archive/`}>193 FRAME ↗</a>
+  </div>
+  <div class="featured-grid">
+    {featuredSlides.slice(0, 6).map((item, index) => (
+      <figure class="featured-card reveal-card">
+        <MediaSlot src={item.src} alt={item.alt} />
+        <figcaption><span>{item.label}</span><span>{String(index + 1).padStart(2, '0')}</span></figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
