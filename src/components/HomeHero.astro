@@ -1,0 +1,24 @@
+---
+import MediaSlot from './MediaSlot.astro';
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<section class="home-hero">
+  <div class="home-hero-meta">
+    <span>KOMUNITAS SENI & KREATIF INDEPENDEN</span>
+    <span>TANGERANG / INDONESIA</span>
+  </div>
+  <div class="home-hero-copy">
+    <h1 class="home-hero-title" transition:name="home-title"><span>SENI</span><span>MEN.</span></h1>
+    <p>Wadah untuk para seniman: dokumentasi proses, perspektif, ekspresi, dan kolaborasi yang tumbuh dari Tangerang.</p>
+  </div>
+  <div class="home-hero-media reveal-card">
+    <MediaSlot src="images/carousel_all/slide_109.jpg" alt="Dokumentasi visual SENIMEN" priority={true} labelLeft="SENIMEN / ARCHIVE" labelRight="TANGERANG" />
+  </div>
+  <div class="home-hero-actions">
+    <span class="page-kicker">DOKUMENTASI / PERSPEKTIF / EKSPRESI</span>
+    <div class="inline-actions">
+      <a class="action-link action-link--pink magnetic" href={`${base}archive/`}>LIHAT ARSIP <span>↗</span></a>
+      <a class="action-link magnetic" href={`${base}articles/`}>BACA ARTIKEL <span>↗</span></a>
+    </div>
+  </div>
+</section>
