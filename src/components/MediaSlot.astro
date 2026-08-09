@@ -1,0 +1,43 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  className?: string;
+  priority?: boolean;
+  labelLeft?: string;
+  labelRight?: string;
+  slotId?: string;
+}
+
+const {
+  src,
+  alt,
+  className = '',
+  priority = false,
+  labelLeft,
+  labelRight,
+  slotId,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const assetUrl = `${base}${src.replace(/^\/+/, '')}`;
+---
+
+<div
+  class={`media-slot ${className}`.trim()}
+  data-media-slot={slotId}
+  data-src={assetUrl}
+  data-alt={alt}
+  data-priority={priority ? 'true' : undefined}
+>
+  <div class="media-art" aria-hidden="true"></div>
+  {(labelLeft || labelRight) && (
+    <div class="media-slot-label">
+      <span>{labelLeft}</span>
+      <span>{labelRight}</span>
+    </div>
+  )}
+  <noscript>
+    <img src={assetUrl} alt={alt} loading={priority ? 'eager' : 'lazy'} decoding="async" />
+  </noscript>
+</div>
