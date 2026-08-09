@@ -1,13 +1,14 @@
 {
   "name": "senimen",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "SENIMEN — komunitas seni & kreatif independen Tangerang.",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scripts/postbuild.mjs",
-    "preview": "astro preview"
+    "build": "astro build",
+    "preview": "astro preview",
+    "scrape:instagram": "node scrape_ig.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,7 @@
     "node": ">=24"
   },
   "dependencies": {
-    "astro": "^7.1.5",
+    "astro": "7.1.6",
     "playwright": "^1.62.1"
   }
 }
