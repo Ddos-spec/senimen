@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { articles, type Article } from '../../data/articles';
+
+export function getStaticPaths() {
+  return articles.map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+
+interface Props { article: Article }
+const { article } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<BaseLayout title={`${article.title} — SENIMEN`} description={article.excerpt} image={article.cover}>
+  <main class="page article-page">
+    <article>
+      <header class="article-hero">
+        <div class="article-hero-meta"><a href={`${base}articles/`}>← SEMUA ARTIKEL</a><span>{article.eyebrow} · {article.readingTime}</span></div>
+        <h1>{article.title}</h1>
+        <p class="article-deck">{article.excerpt}</p>
+      </header>
+
+      <div class="article-cover"><img src={`${base}${article.cover}`} alt="" loading="eager" decoding="async" /></div>
+
+      <div class="article-body">
+        {article.sections.map((section, index) => (
+          <section class="article-section">
+            <div><span class="page-kicker">{String(index + 1).padStart(2, '0')} / {article.eyebrow}</span><h2>{section.heading}</h2></div>
+            <div class="article-section-copy">
+              {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+              {section.bullets && <ul>{section.bullets.map((bullet) => <li>{bullet}</li>)}</ul>}
+            </div>
+          </section>
+        ))}
+      </div>
+    </article>
+  </main>
+</BaseLayout>
