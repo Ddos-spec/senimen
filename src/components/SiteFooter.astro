@@ -1,0 +1,18 @@
+---
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+
+<footer class="global-footer">
+  <div class="footer-wordmark">SENIMEN<sup>®</sup></div>
+  <p>Komunitas Seni & Kreatif Independen<br />Tangerang, Banten, Indonesia.</p>
+  <div class="footer-nav">
+    <a href={`${base}archive/`}>ARSIP</a>
+    <a href={`${base}reels/`}>REELS</a>
+    <a href={`${base}articles/`}>ARTIKEL</a>
+    <a href="https://www.instagram.com/komunitas_senimen/" target="_blank" rel="noreferrer">INSTAGRAM ↗</a>
+  </div>
+  <div class="footer-contact">
+    <a href="mailto:senimenuntukseni@gmail.com">senimenuntukseni@gmail.com</a>
+    <a href="https://wa.me/message/646EHTXQR66WO1" target="_blank" rel="noreferrer">WHATSAPP ↗</a>
+  </div>
+</footer>
