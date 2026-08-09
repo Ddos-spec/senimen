@@ -83,7 +83,7 @@ document.querySelectorAll('.reveal, .reveal-card, .reveal-split').forEach((eleme
 function onScrollFrame() {
   const y = window.scrollY;
   const max = Math.max(document.documentElement.scrollHeight - innerHeight, 1);
-  progress.style.transform = `scaleX(${Math.min(y / max, 1)})`;
+  if (progress) progress.style.transform = `scaleX(${Math.min(y / max, 1)})`;
 
   if (header) {
     if (y > lastY && y > 140 && !body.classList.contains('menu-open')) header.classList.add('hide');
@@ -112,28 +112,86 @@ window.addEventListener('scroll', () => {
 
 onScrollFrame();
 
-// Keep media replacement simple: when real assets are ready, set data-src on a slot.
-// Example: <div class="media-slot" data-src="./media/event-01.jpg"></div>
-document.querySelectorAll('.media-slot[data-src]').forEach((slot) => {
+function finishMediaLoad(slot, media) {
+  slot.classList.remove('is-loading', 'is-error');
+  slot.querySelector('.media-art')?.remove();
+  media.classList.add('is-ready');
+}
+
+function failMediaLoad(slot) {
+  slot.classList.remove('is-loading');
+  slot.classList.add('is-error');
+}
+
+function mountMedia(slot) {
+  if (slot.dataset.mediaMounted === 'true') return;
   const src = slot.dataset.src;
   if (!src) return;
-  const isVideo = /\.(mp4|webm|mov)$/i.test(src);
+
+  slot.dataset.mediaMounted = 'true';
+  slot.classList.add('is-loading');
+
+  const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
   const media = document.createElement(isVideo ? 'video' : 'img');
-  media.src = src;
-  media.alt = slot.dataset.alt || '';
-  media.setAttribute('aria-hidden', media.alt ? 'false' : 'true');
-  Object.assign(media.style, {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    position: 'absolute',
-    inset: '0'
-  });
+
   if (isVideo) {
-    media.autoplay = true;
     media.muted = true;
     media.loop = true;
     media.playsInline = true;
+    media.preload = slot.dataset.priority === 'true' ? 'auto' : 'metadata';
+    media.setAttribute('aria-label', slot.dataset.alt || 'Video dokumentasi Senimen');
+    media.addEventListener('loadeddata', () => finishMediaLoad(slot, media), { once: true });
+    media.addEventListener('error', () => failMediaLoad(slot), { once: true });
+  } else {
+    media.alt = slot.dataset.alt || '';
+    media.decoding = 'async';
+    if (slot.dataset.priority === 'true') {
+      media.loading = 'eager';
+      media.fetchPriority = 'high';
+    } else {
+      media.loading = 'lazy';
+    }
+    media.addEventListener('load', () => finishMediaLoad(slot, media), { once: true });
+    media.addEventListener('error', () => failMediaLoad(slot), { once: true });
   }
-  slot.replaceChildren(media);
-});
+
+  const firstOverlay = slot.querySelector('.media-slot-label, .intermission-caption');
+  if (firstOverlay) slot.insertBefore(media, firstOverlay);
+  else slot.prepend(media);
+
+  media.src = src;
+}
+
+const mediaSlots = [...document.querySelectorAll('.media-slot[data-src]')];
+const prioritySlots = mediaSlots.filter((slot) => slot.dataset.priority === 'true');
+const deferredSlots = mediaSlots.filter((slot) => slot.dataset.priority !== 'true');
+
+prioritySlots.forEach(mountMedia);
+
+if ('IntersectionObserver' in window) {
+  const mediaObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      mountMedia(entry.target);
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin: '500px 0px', threshold: 0.01 });
+
+  deferredSlots.forEach((slot) => mediaObserver.observe(slot));
+} else {
+  deferredSlots.forEach(mountMedia);
+}
+
+const videoObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    const video = entry.target.querySelector('video');
+    if (!video) return;
+    if (entry.isIntersecting && !reducedMotion) video.play().catch(() => {});
+    else video.pause();
+  });
+}, { threshold: .25 });
+
+document.querySelectorAll('.media-slot[data-src]').forEach((slot) => videoObserver.observe(slot));
+
+// Future reels: point any media slot's data-src at a file inside ./public/videos/reels/.
+// The same loader will automatically switch from <img> to viewport-aware <video>.
