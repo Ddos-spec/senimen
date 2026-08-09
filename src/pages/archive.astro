@@ -1,76 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MediaSlot from '../components/MediaSlot.astro';
-import { highlights, visualNotes } from '../data/site';
-
-const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const frames = [
-  ...highlights.map((item) => ({ image: item.image, alt: item.alt, label: item.title })),
-  ...visualNotes.map((item) => ({ image: item.image, alt: item.alt, label: item.label })),
-];
+import { carouselSlides } from '../data/media';
 ---
-
-<BaseLayout title="INDEX VISUAL — SENIMEN" description="Index visual terkurasi dari dokumentasi SENIMEN, komunitas seni dan kreatif independen di Tangerang.">
-  <main class="index-page">
-    <header class="index-header">
-      <a href={base} class="index-back" transition:name="senimen-home">← SENIMEN</a>
-      <span>VISUAL INDEX / 001—{String(frames.length).padStart(3, '0')}</span>
-      <span>TANGERANG</span>
-    </header>
-
-    <section class="index-intro">
-      <p class="index-kicker">ARSIP BUKAN FEED</p>
-      <h1 transition:name="archive-title">JEJAK<br />YANG TIDAK<br />DIRAPIKAN.</h1>
-      <p class="index-copy">Ini bukan galeri “best work”. Frame dipertahankan sebagai potongan proses: poster, dokumentasi, pertemuan, kekacauan, dan sisa konteks yang justru bikin arsip terasa hidup.</p>
+<BaseLayout title="Arsip Visual — SENIMEN" description="193 frame dokumentasi visual SENIMEN dari arsip komunitas seni dan kreatif independen Tangerang." image="images/carousel_all/slide_108.jpg">
+  <main class="page archive-page">
+    <section class="route-hero">
+      <div class="route-hero-grid">
+        <div><span class="page-kicker">ARSIP / 193 FRAME</span><h1 class="page-title">LIVING<br /><em>ARCHIVE.</em></h1></div>
+        <p class="page-lead">Bukan sepuluh gambar dekoratif. Koleksi foto yang sudah dikumpulkan masuk ke satu index visual lengkap dan tetap lazy-load supaya halaman tidak membebani browser sekaligus.</p>
+      </div>
+      <div class="route-count">193 BERKAS / CAROUSEL ALL / SENIMEN</div>
     </section>
 
-    <section class="index-grid" aria-label="Index visual Senimen">
-      {frames.map((frame, index) => (
-        <figure class={`index-frame index-frame--${index % 4}`}>
-          <MediaSlot src={frame.image} alt={frame.alt} />
-          <figcaption><span>{String(index + 1).padStart(3, '0')}</span><span>{frame.label}</span></figcaption>
+    <div class="archive-toolbar"><span>ALL FRAMES / 001—193</span><span>SCROLL TO BROWSE</span></div>
+
+    <section class="archive-masonry" aria-label="193 dokumentasi visual SENIMEN">
+      {carouselSlides.map((frame, index) => (
+        <figure class="archive-item">
+          <MediaSlot src={frame.src} alt={frame.alt} />
+          <figcaption><span>{frame.label}</span><span>{String(index + 1).padStart(3, '0')} / 193</span></figcaption>
         </figure>
       ))}
     </section>
-
-    <footer class="index-footer">
-      <p>END OF THIS CUT / THE ARCHIVE KEEPS MOVING</p>
-      <a href={base}>KEMBALI KE SENIMEN ↑</a>
-    </footer>
   </main>
 </BaseLayout>
-
-<style>
-  :global(body) { background:#050505; color:#fff; }
-  :global(.noise) { mix-blend-mode:screen; opacity:.03; }
-  .index-page { min-height:100vh; background:#050505; color:#fff; padding:24px clamp(18px,2.8vw,42px) 80px; }
-  .index-header { position:sticky; top:0; z-index:20; display:grid; grid-template-columns:1fr auto 1fr; gap:20px; padding:18px 0; background:rgba(5,5,5,.82); backdrop-filter:blur(16px); border-bottom:1px solid #2a2a2a; font:500 10px/1 'DM Mono',monospace; letter-spacing:.08em; }
-  .index-header > :last-child { text-align:right; }
-  .index-back { width:max-content; }
-  .index-intro { min-height:92vh; display:grid; grid-template-columns:.55fr 1.7fr .7fr; gap:3vw; align-items:end; padding:14vh 0 8vh; }
-  .index-kicker,.index-copy { font:400 11px/1.5 'DM Mono',monospace; color:#a4a4a4; }
-  .index-copy { max-width:360px; }
-  h1 { margin:0; font-size:clamp(78px,13vw,210px); line-height:.72; letter-spacing:-.085em; font-weight:900; }
-  .index-grid { display:grid; grid-template-columns:repeat(12,1fr); gap:clamp(42px,8vw,130px) 18px; align-items:start; }
-  .index-frame { margin:0; }
-  .index-frame :global(.media-slot) { aspect-ratio:4/5; background:#111; }
-  .index-frame figcaption { display:flex; justify-content:space-between; gap:20px; padding-top:9px; font:400 9px/1 'DM Mono',monospace; color:#898989; text-transform:uppercase; }
-  .index-frame--0 { grid-column:1 / 8; }
-  .index-frame--1 { grid-column:9 / 13; margin-top:18vw; }
-  .index-frame--2 { grid-column:2 / 6; }
-  .index-frame--3 { grid-column:7 / 13; margin-top:8vw; }
-  .index-frame--0 :global(.media-slot), .index-frame--3 :global(.media-slot) { aspect-ratio:16/10; }
-  .index-footer { margin-top:18vh; padding-top:24px; border-top:1px solid #2a2a2a; display:flex; justify-content:space-between; gap:24px; font:500 10px/1 'DM Mono',monospace; }
-  .index-footer p { margin:0; color:#777; }
-  .index-footer a { color:#f70bbd; }
-  @media(max-width:800px){
-    .index-header { grid-template-columns:1fr auto; }
-    .index-header > :last-child { display:none; }
-    .index-intro { min-height:78vh; grid-template-columns:1fr; align-content:end; }
-    .index-copy { max-width:520px; }
-    .index-grid { grid-template-columns:repeat(2,1fr); gap:54px 12px; }
-    .index-frame--0,.index-frame--1,.index-frame--2,.index-frame--3 { grid-column:auto; margin-top:0; }
-    .index-frame:nth-child(3n+2) { margin-top:80px; }
-    .index-footer { flex-direction:column; }
-  }
-</style>
