@@ -1,0 +1,57 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../../styles.css';
+import '../../brand.css';
+import '../../media.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'SENIMEN — Komunitas Seni & Kreatif Independen',
+  description = 'SENIMEN — Komunitas Seni & Kreatif Independen di Tangerang. Dokumentasi proses, perspektif, ekspresi, dan kolaborasi.',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'SENIMEN',
+  description,
+  url: canonical.origin,
+  email: 'senimenuntukseni@gmail.com',
+  sameAs: ['https://www.instagram.com/komunitas_senimen/'],
+  areaServed: 'Tangerang, Banten, Indonesia',
+};
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f70bbd" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href={canonical} />
+    <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <ClientRouter fallback="animate" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="cursor" aria-hidden="true"><span></span></div>
+    <div class="progress" aria-hidden="true"><i></i></div>
+    <slot />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>
