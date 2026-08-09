@@ -1,0 +1,90 @@
+:root {
+  --paper: #ffffff;
+  --ink: #000000;
+  --acid: #f70bbd;
+  --red: #f70bbd;
+  --blue: #f70bbd;
+  --line: rgba(0, 0, 0, .18);
+}
+
+body { background: #fff; }
+.site-header { background: rgba(255,255,255,.84); }
+.brand-mark { color: #fff; background: #000; }
+.menu-toggle[aria-expanded="true"] i { background: #f70bbd; }
+.menu > a:not(.menu-instagram):hover { color: #f70bbd; }
+
+.hero-stamp {
+  background: #f70bbd;
+  color: #fff;
+}
+
+.cursor {
+  background: #f70bbd;
+  border-color: #fff;
+}
+
+.progress i { background: #f70bbd; }
+
+.media-art--one {
+  background:
+    radial-gradient(circle at 70% 32%, #fff 0 8%, transparent 8.2%),
+    linear-gradient(34deg, transparent 0 44%, #f70bbd 44% 62%, transparent 62%),
+    repeating-linear-gradient(90deg, #050505 0 14px, #2a2a2a 14px 28px);
+}
+.media-art--two {
+  background:
+    linear-gradient(118deg, #000 0 31%, transparent 31.2%),
+    radial-gradient(circle at 70% 40%, #fff 0 21%, transparent 21.2%),
+    #f70bbd;
+}
+.media-art--three {
+  background: repeating-radial-gradient(circle at 40% 35%, #000 0 9px, #fff 10px 20px, #f70bbd 21px 27px);
+}
+.media-art--four {
+  background: conic-gradient(from 20deg at 50% 50%, #f70bbd, #000, #fff, #f70bbd, #000);
+}
+.media-art--five {
+  background:
+    linear-gradient(165deg, transparent 0 46%, #fff 46% 54%, transparent 54%),
+    repeating-linear-gradient(0deg, #f70bbd 0 18px, #111 18px 37px);
+}
+.media-art--six {
+  background:
+    radial-gradient(ellipse at 28% 50%, #f70bbd 0 10%, transparent 10.3%),
+    radial-gradient(ellipse at 70% 42%, #fff 0 18%, transparent 18.3%),
+    repeating-linear-gradient(135deg, #000 0 30px, #1a1a1a 30px 60px);
+}
+
+.ticker {
+  background: #f70bbd;
+  color: #fff;
+}
+
+.statement {
+  background: #f70bbd;
+  color: #000;
+}
+.statement-big em { color: #fff; }
+
+.space-row:hover {
+  background: #000;
+  color: #f70bbd;
+}
+
+.join {
+  background: #f70bbd;
+  color: #000;
+}
+.pill-link:hover {
+  background: #000;
+  color: #f70bbd;
+}
+
+.archive .section-index,
+.archive .archive-meta,
+.archive .section-note { color: #aaa; }
+
+@media (prefers-color-scheme: dark) {
+  /* Senimen branding intentionally stays high-contrast light/dark instead of following OS theme. */
+  :root { color-scheme: light; }
+}
