@@ -1,0 +1,164 @@
+.media-slot > img,
+.media-slot > video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: absolute;
+  inset: 0;
+  transform: scale(1.001);
+  transition: transform .9s cubic-bezier(.2,.8,.2,1), filter .6s ease, opacity .45s ease;
+}
+.media-slot:hover > img,
+.media-slot:hover > video { transform: scale(1.035); }
+.media-slot.is-loading::after {
+  content: 'LOADING / SENIMEN ARCHIVE';
+  position: absolute;
+  inset: auto 10px 10px auto;
+  z-index: 3;
+  padding: 6px 8px;
+  background: #000;
+  color: #fff;
+  font: 500 8px/1 var(--mono);
+  letter-spacing: .08em;
+}
+.media-slot.is-error::after {
+  content: 'MEDIA OFFLINE';
+  position: absolute;
+  inset: auto 10px 10px auto;
+  z-index: 3;
+  padding: 6px 8px;
+  background: #f70bbd;
+  color: #000;
+  font: 500 8px/1 var(--mono);
+}
+.hero-media > img,
+.hero-media > video { filter: grayscale(1) contrast(1.08); }
+.hero-media:hover > img,
+.hero-media:hover > video { filter: grayscale(0) contrast(1); }
+.archive-card .media-slot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 1px solid rgba(255,255,255,.16);
+  mix-blend-mode: screen;
+}
+
+.visual-notes {
+  position: relative;
+  overflow: hidden;
+  padding-top: clamp(90px, 12vw, 170px);
+  padding-bottom: clamp(100px, 14vw, 210px);
+  background: #fff;
+  color: #000;
+}
+.visual-notes-head {
+  padding: 0 var(--pad);
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 7vw;
+  align-items: end;
+}
+.visual-notes-head .display { margin-top: 28px; }
+.visual-notes-copy {
+  max-width: 480px;
+  margin: 0;
+  font-size: clamp(15px, 1.35vw, 20px);
+  line-height: 1.45;
+  letter-spacing: -.025em;
+}
+.visual-wall {
+  width: min(1500px, 100%);
+  margin: clamp(70px, 9vw, 130px) auto 0;
+  padding: 0 var(--pad);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: clamp(48px, 5vw, 82px);
+  gap: clamp(10px, 1.35vw, 20px);
+}
+.visual-frame {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+  min-height: 260px;
+}
+.visual-frame:nth-child(1) { grid-column: 1 / 7; grid-row: 1 / 8; transform: rotate(-1.2deg); }
+.visual-frame:nth-child(2) { grid-column: 8 / 13; grid-row: 2 / 7; transform: rotate(1.3deg); }
+.visual-frame:nth-child(3) { grid-column: 2 / 5; grid-row: 9 / 15; transform: rotate(1deg); }
+.visual-frame:nth-child(4) { grid-column: 5 / 11; grid-row: 8 / 16; transform: rotate(-.7deg); }
+.visual-frame:nth-child(5) { grid-column: 10 / 13; grid-row: 10 / 15; transform: rotate(1.7deg); }
+.visual-frame:nth-child(6) { grid-column: 1 / 8; grid-row: 17 / 23; transform: rotate(.6deg); }
+.visual-frame .media-slot { position: absolute; inset: 0; }
+.visual-frame img { filter: saturate(.78) contrast(1.04); }
+.visual-frame:hover img { filter: saturate(1) contrast(1); }
+.visual-frame-tag {
+  position: absolute;
+  z-index: 4;
+  left: 10px;
+  top: 10px;
+  padding: 7px 9px;
+  background: #f70bbd;
+  color: #000;
+  font: 500 8px/1 var(--mono);
+  letter-spacing: .08em;
+}
+.visual-wall-caption {
+  margin: 30px var(--pad) 0 auto;
+  max-width: 470px;
+  padding-top: 12px;
+  border-top: 1px solid #000;
+  font: 400 10px/1.5 var(--mono);
+  text-transform: uppercase;
+}
+
+.media-reel-placeholder {
+  position: relative;
+}
+.media-reel-placeholder::before {
+  content: 'VIDEO ARCHIVE READY';
+  position: absolute;
+  z-index: 4;
+  left: 16px;
+  top: 16px;
+  padding: 8px 10px;
+  background: #f70bbd;
+  color: #000;
+  font: 500 8px/1 var(--mono);
+  letter-spacing: .08em;
+}
+
+@media (max-width: 800px) {
+  .visual-notes-head { grid-template-columns: 1fr; }
+  .visual-wall {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+  }
+  .visual-frame,
+  .visual-frame:nth-child(n) {
+    grid-column: auto;
+    grid-row: auto;
+    transform: none;
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+  }
+  .visual-frame:nth-child(1),
+  .visual-frame:nth-child(4),
+  .visual-frame:nth-child(6) { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+  .visual-wall-caption { margin-left: var(--pad); }
+}
+
+@media (max-width: 520px) {
+  .visual-wall { grid-template-columns: 1fr; }
+  .visual-frame:nth-child(n) { grid-column: 1; aspect-ratio: 4 / 5; }
+  .visual-frame:nth-child(1),
+  .visual-frame:nth-child(4),
+  .visual-frame:nth-child(6) { aspect-ratio: 16 / 11; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-slot > img,
+  .media-slot > video { transition: none; }
+}
