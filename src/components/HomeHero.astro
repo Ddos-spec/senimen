@@ -11,8 +11,8 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
 
   <div class="hero-classic-stage">
     <h1 id="senimen-home-title" class="hero-classic-title" aria-label="SENIMEN" transition:name="home-title">
-      <span class="hero-word hero-word--seni">SENI</span>
-      <span class="hero-word hero-word--men">MEN</span>
+      <span class="hero-word hero-word--seni" aria-hidden="true"><i>S</i><i>E</i><i>N</i><i>I</i></span>
+      <span class="hero-word hero-word--men" aria-hidden="true"><i>M</i><i>E</i><i>N</i></span>
     </h1>
 
     <div class="hero-classic-poster reveal-card">
@@ -80,9 +80,9 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
     inset: 0;
     z-index: 5;
     margin: 0;
-    font-size: clamp(108px, 18.5vw, 284px);
-    line-height: .76;
-    letter-spacing: -.095em;
+    font-size: clamp(96px, 15.8vw, 242px);
+    line-height: .78;
+    letter-spacing: 0;
     font-weight: 900;
     text-transform: uppercase;
     pointer-events: none;
@@ -90,8 +90,17 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
 
   .hero-word {
     position: absolute;
-    display: block;
+    display: flex;
+    align-items: baseline;
+    gap: clamp(12px, 1.05vw, 20px);
     white-space: nowrap;
+  }
+
+  .hero-word i {
+    display: block;
+    font: inherit;
+    font-style: normal;
+    line-height: inherit;
   }
 
   .hero-word--seni {
@@ -102,7 +111,7 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
   .hero-word--men {
     right: 0;
     bottom: 5%;
-    padding-right: .045em;
+    padding-right: .02em;
   }
 
   .hero-classic-poster {
@@ -182,7 +191,8 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
 
   @media (max-width: 1100px) {
     .hero-classic-stage { min-height: 590px; }
-    .hero-classic-title { font-size: clamp(104px, 19vw, 220px); }
+    .hero-classic-title { font-size: clamp(88px, 16.2vw, 190px); }
+    .hero-word { gap: clamp(10px, 1vw, 16px); }
     .hero-word--seni { top: 8%; }
     .hero-word--men { bottom: 7%; }
     .hero-classic-poster { width: min(36vw, 420px); min-width: 280px; }
@@ -215,23 +225,24 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
       position: relative;
       inset: auto;
       display: grid;
-      gap: 20px;
+      gap: 22px;
       transform: none;
       z-index: 5;
-      font-size: clamp(82px, 26vw, 142px);
-      line-height: .78;
+      font-size: clamp(68px, 21.5vw, 116px);
+      line-height: .82;
     }
 
     .hero-word {
       position: relative;
       inset: auto;
+      gap: clamp(7px, 2.2vw, 12px);
     }
 
-    .hero-word--seni { text-align: left; }
+    .hero-word--seni { justify-content: flex-start; }
     .hero-word--men {
-      text-align: right;
+      justify-content: flex-end;
       color: var(--senimen-pink);
-      padding-right: .03em;
+      padding-right: 0;
     }
 
     .hero-classic-poster {
@@ -276,9 +287,10 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
     .hero-classic { padding-inline: 15px; }
     .hero-classic-meta span:first-child { max-width: 190px; }
     .hero-classic-title {
-      font-size: clamp(74px, 27vw, 112px);
-      gap: 18px;
+      font-size: clamp(62px, 20.5vw, 92px);
+      gap: 20px;
     }
+    .hero-word { gap: 7px; }
     .hero-classic-poster { width: 88vw; }
     .hero-classic-stamp { top: 36%; right: 0; }
     .hero-classic-bottom p { max-width: 100%; font-size: 17px; }
