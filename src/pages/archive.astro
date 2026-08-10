@@ -6,6 +6,9 @@ const total = driveArchive.length;
 const imageCount = driveArchive.filter((item) => item.kind === 'image').length;
 const motionCount = driveArchive.filter((item) => item.kind === 'video').length;
 const audioCount = driveArchive.filter((item) => item.kind === 'audio').length;
+
+const gridThumb = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w600`;
+const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w2000`;
 ---
 <BaseLayout title="Arsip — SENIMEN" description="Arsip foto, video, dan suara SENIMEN dari keluaran resmi CONTENT JUNI.">
   <main class="page archive-page">
@@ -20,21 +23,31 @@ const audioCount = driveArchive.filter((item) => item.kind === 'audio').length;
     <section class="archive-masonry archive-drive-masonry" aria-label="Arsip media SENIMEN">
       {driveArchive.map((item, index) => (
         <article class={`archive-pin archive-pin--${item.kind}`}>
-          {item.kind === 'image' ? (
-            <a href={item.viewUrl} target="_blank" rel="noreferrer" class="archive-pin-media" aria-label={`Buka ${item.title}`}>
-              <img src={item.thumbnailUrl} alt={`${item.group} — ${item.title}`} loading={index < 6 ? 'eager' : 'lazy'} decoding="async" />
-            </a>
-          ) : (
-            <div class="archive-pin-media archive-pin-embed">
-              <iframe
-                src={item.previewUrl}
-                title={`${item.group} — ${item.title}`}
-                loading="lazy"
-                allow="autoplay; fullscreen"
-                allowfullscreen
-              ></iframe>
-            </div>
-          )}
+          <button
+            type="button"
+            class="archive-pin-media archive-pin-trigger"
+            aria-label={`Lihat ${item.group} — ${item.title}`}
+            data-kind={item.kind}
+            data-title={item.title}
+            data-group={item.group}
+            data-image={item.kind === 'image' ? fullImage(item.id) : ''}
+            data-preview={item.kind !== 'image' ? item.previewUrl : ''}
+          >
+            {item.kind === 'image' ? (
+              <img
+                src={gridThumb(item.id)}
+                alt={`${item.group} — ${item.title}`}
+                loading={index < 4 ? 'eager' : 'lazy'}
+                fetchpriority={index < 2 ? 'high' : 'auto'}
+                decoding="async"
+              />
+            ) : (
+              <span class="archive-media-placeholder" aria-hidden="true">
+                <span class="archive-media-kind">{item.kind === 'video' ? '▶' : '♪'}</span>
+                <span>{item.kind === 'video' ? 'VIDEO' : 'AUDIO'}</span>
+              </span>
+            )}
+          </button>
           <div class="archive-pin-meta">
             <span>{item.group}</span>
             <span>{item.kind.toUpperCase()} / {String(index + 1).padStart(2, '0')}</span>
@@ -43,4 +56,237 @@ const audioCount = driveArchive.filter((item) => item.kind === 'audio').length;
       ))}
     </section>
   </main>
+
+  <dialog class="archive-viewer" id="archive-viewer" aria-label="Viewer arsip SENIMEN">
+    <button class="archive-viewer-close" type="button" aria-label="Tutup viewer">TUTUP ×</button>
+    <div class="archive-viewer-shell">
+      <div class="archive-viewer-media" id="archive-viewer-media"></div>
+      <div class="archive-viewer-meta">
+        <span id="archive-viewer-group"></span>
+        <strong id="archive-viewer-title"></strong>
+      </div>
+    </div>
+  </dialog>
+
+  <script is:inline>
+    (() => {
+      const dialog = document.getElementById('archive-viewer');
+      const media = document.getElementById('archive-viewer-media');
+      const title = document.getElementById('archive-viewer-title');
+      const group = document.getElementById('archive-viewer-group');
+      const close = dialog?.querySelector('.archive-viewer-close');
+
+      if (!(dialog instanceof HTMLDialogElement) || !media || !title || !group) return;
+
+      const clearMedia = () => {
+        media.replaceChildren();
+      };
+
+      document.querySelectorAll('.archive-pin-trigger').forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+          if (!(trigger instanceof HTMLElement)) return;
+          clearMedia();
+
+          const kind = trigger.dataset.kind || '';
+          const itemTitle = trigger.dataset.title || '';
+          const itemGroup = trigger.dataset.group || '';
+          title.textContent = itemTitle;
+          group.textContent = itemGroup;
+
+          if (kind === 'image') {
+            const img = document.createElement('img');
+            img.src = trigger.dataset.image || '';
+            img.alt = `${itemGroup} — ${itemTitle}`;
+            img.decoding = 'async';
+            media.append(img);
+          } else {
+            const frame = document.createElement('iframe');
+            frame.src = trigger.dataset.preview || '';
+            frame.title = `${itemGroup} — ${itemTitle}`;
+            frame.allow = 'autoplay; fullscreen';
+            frame.allowFullscreen = true;
+            frame.loading = 'eager';
+            media.append(frame);
+          }
+
+          dialog.showModal();
+          document.documentElement.classList.add('archive-viewer-open');
+        });
+      });
+
+      const closeViewer = () => {
+        clearMedia();
+        dialog.close();
+        document.documentElement.classList.remove('archive-viewer-open');
+      };
+
+      close?.addEventListener('click', closeViewer);
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) closeViewer();
+      });
+      dialog.addEventListener('close', () => {
+        clearMedia();
+        document.documentElement.classList.remove('archive-viewer-open');
+      });
+    })();
+  </script>
 </BaseLayout>
+
+<style>
+  .archive-drive-masonry {
+    columns: 5 220px;
+    column-gap: 14px;
+    padding-top: 28px;
+  }
+  .archive-pin {
+    break-inside: avoid;
+    margin: 0 0 28px;
+  }
+  .archive-pin-media {
+    width: 100%;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    border: 0;
+    background: #151515;
+    color: #fff;
+    cursor: zoom-in;
+    text-align: left;
+  }
+  .archive-pin-media img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform .35s ease, opacity .25s ease;
+  }
+  .archive-pin-media:hover img { transform: scale(1.018); }
+  .archive-media-placeholder {
+    min-height: 220px;
+    aspect-ratio: 4 / 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #111;
+    font: 500 9px/1 var(--mono);
+    letter-spacing: .09em;
+  }
+  .archive-pin--video .archive-media-placeholder { aspect-ratio: 9 / 16; }
+  .archive-pin--audio .archive-media-placeholder { aspect-ratio: 1 / 1; }
+  .archive-media-kind {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #444;
+    border-radius: 50%;
+    font-size: 21px;
+  }
+  .archive-pin-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 8px;
+    color: #8d8d8d;
+    font: 400 8px/1.25 var(--mono);
+  }
+
+  .archive-viewer {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(0,0,0,.94);
+    color: #fff;
+  }
+  .archive-viewer::backdrop { background: rgba(0,0,0,.88); }
+  .archive-viewer-shell {
+    width: min(1180px, calc(100vw - 48px));
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 72px 0 38px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+    gap: 28px;
+    align-items: center;
+  }
+  .archive-viewer-media {
+    min-height: 70dvh;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #080808;
+  }
+  .archive-viewer-media img {
+    max-width: 100%;
+    max-height: 86dvh;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+  .archive-viewer-media iframe {
+    width: 100%;
+    height: min(82dvh, 820px);
+    border: 0;
+    background: #000;
+  }
+  .archive-viewer-meta {
+    align-self: end;
+    padding-bottom: 20px;
+    display: grid;
+    gap: 10px;
+  }
+  .archive-viewer-meta span {
+    color: #999;
+    font: 500 9px/1.3 var(--mono);
+    letter-spacing: .06em;
+  }
+  .archive-viewer-meta strong {
+    font-size: clamp(24px, 3vw, 44px);
+    line-height: .95;
+    letter-spacing: -.05em;
+  }
+  .archive-viewer-close {
+    position: fixed;
+    z-index: 4;
+    top: 18px;
+    right: 22px;
+    padding: 12px 14px;
+    border: 1px solid #555;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+    font: 500 9px/1 var(--mono);
+  }
+  :global(html.archive-viewer-open) { overflow: hidden; }
+
+  @media (max-width: 760px) {
+    .archive-drive-masonry {
+      columns: 2 150px;
+      column-gap: 9px;
+      padding-top: 20px;
+    }
+    .archive-pin { margin-bottom: 20px; }
+    .archive-media-placeholder { min-height: 150px; }
+    .archive-viewer-shell {
+      width: calc(100vw - 24px);
+      padding: 62px 0 22px;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-content: start;
+    }
+    .archive-viewer-media { min-height: 0; }
+    .archive-viewer-media iframe { height: 72dvh; }
+    .archive-viewer-meta { align-self: auto; padding: 0 2px 20px; }
+    .archive-viewer-close { top: 12px; right: 12px; }
+  }
+
+  @media (max-width: 420px) {
+    .archive-drive-masonry { columns: 2; padding-inline: 10px; }
+  }
+</style>
