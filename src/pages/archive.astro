@@ -3,21 +3,60 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { driveArchive } from '../data/media';
 import { brand } from '../data/brand';
 
-const total = driveArchive.length;
-const imageCount = driveArchive.filter((item) => item.kind === 'image').length;
-const motionCount = driveArchive.filter((item) => item.kind === 'video').length;
-const audioCount = driveArchive.filter((item) => item.kind === 'audio').length;
+const hash = (value: string) => {
+  let out = 2166136261;
+  for (let i = 0; i < value.length; i += 1) {
+    out ^= value.charCodeAt(i);
+    out = Math.imul(out, 16777619);
+  }
+  return out >>> 0;
+};
+
+const scatterByGroup = <T extends { id: string; group: string }>(items: T[]) => {
+  const buckets = new Map<string, T[]>();
+  items.forEach((item) => {
+    const bucket = buckets.get(item.group) ?? [];
+    bucket.push(item);
+    buckets.set(item.group, bucket);
+  });
+  buckets.forEach((bucket) => bucket.sort((a, b) => hash(a.id) - hash(b.id)));
+
+  const result: T[] = [];
+  const recent: string[] = [];
+  while (result.length < items.length) {
+    const available = [...buckets.entries()].filter(([, bucket]) => bucket.length > 0);
+    available.sort(([groupA, bucketA], [groupB, bucketB]) => {
+      const penaltyA = recent.includes(groupA) ? 10000 : 0;
+      const penaltyB = recent.includes(groupB) ? 10000 : 0;
+      const sizeBias = (bucketB.length - bucketA.length) * 25;
+      const jitterA = hash(`${groupA}:${result.length}`) % 997;
+      const jitterB = hash(`${groupB}:${result.length}`) % 997;
+      return penaltyA - penaltyB + sizeBias + jitterA - jitterB;
+    });
+
+    const [group, bucket] = available[0];
+    const item = bucket.shift();
+    if (!item) break;
+    result.push(item);
+    recent.push(group);
+    if (recent.length > 3) recent.shift();
+  }
+  return result;
+};
+
+const archiveItems = scatterByGroup([...driveArchive]);
+const total = archiveItems.length;
+const imageCount = archiveItems.filter((item) => item.kind === 'image').length;
+const motionCount = archiveItems.filter((item) => item.kind === 'video').length;
+const audioCount = archiveItems.filter((item) => item.kind === 'audio').length;
 
 const gridThumb = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w420`;
 const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w1800`;
+const directMedia = (id: string) => `https://drive.google.com/uc?export=download&id=${id}`;
 const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
-const thumbFor = (item: (typeof driveArchive)[number]) => {
-  if (item.kind === 'audio') return brand.logoSmall;
-  return gridThumb(item.id);
-};
-
-const fallbackFor = (item: (typeof driveArchive)[number]) => {
+const thumbFor = (item: (typeof archiveItems)[number]) => item.kind === 'audio' ? brand.logoSmall : gridThumb(item.id);
+const fallbackFor = (item: (typeof archiveItems)[number]) => {
   if (item.kind === 'audio') return brand.logoSmall;
   if (item.kind === 'video') {
     const group = item.group.toUpperCase();
@@ -27,7 +66,7 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
   return brand.logoSmall;
 };
 ---
-<BaseLayout title="Arsip — SENIMEN" description="Arsip foto, video, dan suara SENIMEN dari keluaran resmi CONTENT JUNI." image={brand.og}>
+<BaseLayout title="Arsip — SENIMEN" description="Foto, video, dan rekaman dari kegiatan serta karya yang terkumpul di SENIMEN." image={brand.og}>
   <main class="page archive-page">
     <section class="route-hero archive-drive-hero">
       <div>
@@ -38,22 +77,25 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
     </section>
 
     <section class="archive-masonry archive-drive-masonry" aria-label="Arsip media SENIMEN">
-      {driveArchive.map((item, index) => {
+      {archiveItems.map((item, index) => {
         const thumb = thumbFor(item);
         const fallback = fallbackFor(item);
-        const eager = index < 8;
+        const eager = index < 6;
+        const shape = hash(item.id) % 5;
         return (
-          <article class={`archive-pin archive-pin--${item.kind}`}>
+          <article class={`archive-pin archive-pin--${item.kind} archive-pin--shape-${shape}`}>
             <button
               type="button"
               class="archive-pin-media archive-pin-trigger"
-              aria-label={`Lihat ${item.group} — ${item.title}`}
+              aria-label={`Buka ${item.group} — ${item.title}`}
               data-index={index}
               data-kind={item.kind}
               data-title={item.title}
               data-group={item.group}
+              data-mime={item.mimeType}
               data-image={item.kind === 'image' ? fullImage(item.id) : ''}
-              data-preview={item.kind !== 'image' ? item.previewUrl : ''}
+              data-media={item.kind !== 'image' ? directMedia(item.id) : ''}
+              data-poster={thumb}
             >
               <img
                 class="archive-pin-thumb"
@@ -62,13 +104,13 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
                 data-fallback={fallback}
                 alt={`${item.group} — ${item.title}`}
                 loading={eager ? 'eager' : 'lazy'}
-                fetchpriority={index < 3 ? 'high' : 'low'}
+                fetchpriority={index < 2 ? 'high' : 'low'}
                 decoding="async"
               />
               {item.kind !== 'image' && (
                 <span class="archive-kind-badge" aria-hidden="true">
                   <b>{item.kind === 'video' ? '▶' : '♪'}</b>
-                  <span>{item.kind === 'video' ? 'VIDEO' : 'AUDIO'}</span>
+                  <span>{item.kind === 'video' ? 'PLAY' : 'DENGAR'}</span>
                 </span>
               )}
             </button>
@@ -124,7 +166,7 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
             hydrate(entry.target);
             observer.unobserve(entry.target);
           });
-        }, { rootMargin: '650px 0px' });
+        }, { rootMargin: '360px 0px' });
         deferred.forEach((img) => observer.observe(img));
       } else {
         deferred.forEach(hydrate);
@@ -143,7 +185,22 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
       if (!(dialog instanceof HTMLDialogElement) || !media || !title || !group || !count) return;
 
       let activeIndex = 0;
-      const clearMedia = () => media.replaceChildren();
+      const clearMedia = () => {
+        media.replaceChildren();
+        delete media.dataset.kind;
+      };
+
+      const showPlaybackError = (kind, poster) => {
+        const box = document.createElement('div');
+        box.className = 'archive-playback-error';
+        const img = document.createElement('img');
+        img.src = poster || '';
+        img.alt = '';
+        const text = document.createElement('p');
+        text.textContent = kind === 'video' ? 'Video ini belum bisa diputar di browser ini.' : 'Audio ini belum bisa diputar di browser ini.';
+        box.append(img, text);
+        media.replaceChildren(box);
+      };
 
       const renderAt = (index) => {
         if (!triggers.length) return;
@@ -155,6 +212,9 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
         const kind = trigger.dataset.kind || '';
         const itemTitle = trigger.dataset.title || '';
         const itemGroup = trigger.dataset.group || '';
+        const source = trigger.dataset.media || '';
+        const poster = trigger.dataset.poster || '';
+        media.dataset.kind = kind;
         title.textContent = itemTitle;
         group.textContent = itemGroup;
         count.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(triggers.length).padStart(2, '0')}`;
@@ -165,15 +225,42 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
           img.alt = `${itemGroup} — ${itemTitle}`;
           img.decoding = 'async';
           media.append(img);
-        } else {
-          const frame = document.createElement('iframe');
-          frame.src = trigger.dataset.preview || '';
-          frame.title = `${itemGroup} — ${itemTitle}`;
-          frame.allow = 'autoplay; fullscreen';
-          frame.allowFullscreen = true;
-          frame.loading = 'eager';
-          media.append(frame);
+          return;
         }
+
+        if (kind === 'video') {
+          const video = document.createElement('video');
+          video.className = 'archive-native-video';
+          video.src = source;
+          video.poster = poster;
+          video.controls = true;
+          video.autoplay = true;
+          video.playsInline = true;
+          video.preload = 'metadata';
+          video.addEventListener('error', () => showPlaybackError('video', poster), { once: true });
+          media.append(video);
+          return;
+        }
+
+        const stage = document.createElement('div');
+        stage.className = 'archive-audio-stage';
+        const art = document.createElement('img');
+        art.className = 'archive-audio-art';
+        art.src = poster;
+        art.alt = '';
+        const label = document.createElement('div');
+        label.className = 'archive-audio-label';
+        label.innerHTML = '<span>REKAMAN</span><strong></strong>';
+        const labelTitle = label.querySelector('strong');
+        if (labelTitle) labelTitle.textContent = itemTitle.replace(/\.[a-z0-9]+$/i, '');
+        const audio = document.createElement('audio');
+        audio.src = source;
+        audio.controls = true;
+        audio.autoplay = true;
+        audio.preload = 'metadata';
+        audio.addEventListener('error', () => showPlaybackError('audio', poster), { once: true });
+        stage.append(art, label, audio);
+        media.append(stage);
       };
 
       const openAt = (index) => {
@@ -182,10 +269,7 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
         document.documentElement.classList.add('archive-viewer-open');
       };
 
-      triggers.forEach((trigger, index) => {
-        trigger.addEventListener('click', () => openAt(index));
-      });
-
+      triggers.forEach((trigger, index) => trigger.addEventListener('click', () => openAt(index)));
       prev?.addEventListener('click', () => renderAt(activeIndex - 1));
       next?.addEventListener('click', () => renderAt(activeIndex + 1));
 
@@ -225,19 +309,20 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
   .archive-pin-media {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 5;
     padding: 0;
     display: block;
     overflow: hidden;
     border: 0;
-    background: linear-gradient(135deg, #111, #1b1b1b);
+    background: #121212;
     color: #fff;
     cursor: zoom-in;
     text-align: left;
   }
-  .archive-pin:nth-child(5n + 2) .archive-pin-media { aspect-ratio: 1 / 1; }
-  .archive-pin:nth-child(7n + 3) .archive-pin-media { aspect-ratio: 3 / 4; }
-  .archive-pin:nth-child(9n + 4) .archive-pin-media { aspect-ratio: 16 / 11; }
+  .archive-pin--shape-0 .archive-pin-media { aspect-ratio: 4 / 5; }
+  .archive-pin--shape-1 .archive-pin-media { aspect-ratio: 1 / 1; }
+  .archive-pin--shape-2 .archive-pin-media { aspect-ratio: 3 / 4; }
+  .archive-pin--shape-3 .archive-pin-media { aspect-ratio: 16 / 11; }
+  .archive-pin--shape-4 .archive-pin-media { aspect-ratio: 5 / 7; }
   .archive-pin-thumb {
     width: 100%;
     height: 100%;
@@ -271,6 +356,7 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
     color: #8d8d8d;
     font: 400 8px/1.25 var(--mono);
   }
+  .archive-pin-meta span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .archive-viewer {
     width: 100vw;
@@ -280,28 +366,29 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
     margin: 0;
     padding: 0;
     border: 0;
-    background: rgba(0,0,0,.95);
+    background: rgba(0,0,0,.96);
     color: #fff;
   }
-  .archive-viewer::backdrop { background: rgba(0,0,0,.9); }
+  .archive-viewer::backdrop { background: rgba(0,0,0,.92); }
   .archive-viewer-shell {
-    width: min(1180px, calc(100vw - 80px));
+    width: min(1280px, calc(100vw - 96px));
     min-height: 100dvh;
     margin: 0 auto;
-    padding: 64px 0 34px;
+    padding: 62px 0 32px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
-    gap: 28px;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+    gap: clamp(20px, 3vw, 44px);
     align-items: center;
   }
   .archive-viewer-media {
-    min-height: 72dvh;
+    min-height: min(78dvh, 820px);
     display: grid;
     place-items: center;
     overflow: hidden;
     background: #080808;
   }
-  .archive-viewer-media img {
+  .archive-viewer-media[data-kind="audio"] { min-height: 0; background: transparent; }
+  .archive-viewer-media img:not(.archive-audio-art) {
     max-width: 100%;
     max-height: 88dvh;
     width: auto;
@@ -309,12 +396,45 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
     display: block;
     object-fit: contain;
   }
-  .archive-viewer-media iframe {
+  .archive-native-video {
     width: 100%;
-    height: min(84dvh, 840px);
-    border: 0;
+    max-height: 84dvh;
+    display: block;
+    object-fit: contain;
     background: #000;
   }
+  .archive-audio-stage {
+    width: min(760px, 100%);
+    min-height: min(64dvh, 620px);
+    padding: clamp(26px, 5vw, 68px);
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    gap: 28px;
+    background: #0b0b0b;
+    border: 1px solid #2d2d2d;
+  }
+  .archive-audio-art {
+    width: min(320px, 58%);
+    align-self: center;
+    justify-self: center;
+    display: block;
+    object-fit: contain;
+  }
+  .archive-audio-label { display: grid; gap: 8px; }
+  .archive-audio-label span { color: #888; font: 500 9px/1 var(--mono); letter-spacing: .08em; }
+  .archive-audio-label strong { max-width: 14ch; font-size: clamp(30px, 5vw, 68px); line-height: .9; letter-spacing: -.06em; }
+  .archive-audio-stage audio { width: 100%; min-height: 44px; }
+  .archive-playback-error {
+    width: min(620px, 100%);
+    padding: 32px;
+    display: grid;
+    place-items: center;
+    gap: 22px;
+    border: 1px solid #333;
+    text-align: center;
+  }
+  .archive-playback-error img { width: min(260px, 60%); max-height: 260px; object-fit: contain; }
+  .archive-playback-error p { margin: 0; max-width: 34ch; font-size: 16px; line-height: 1.45; }
   .archive-viewer-meta {
     align-self: end;
     padding-bottom: 20px;
@@ -328,6 +448,7 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
     letter-spacing: .06em;
   }
   .archive-viewer-meta strong {
+    overflow-wrap: anywhere;
     font-size: clamp(24px, 3vw, 44px);
     line-height: .95;
     letter-spacing: -.05em;
@@ -343,7 +464,7 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
     font: 500 9px/1 var(--mono);
     backdrop-filter: blur(8px);
   }
-  .archive-viewer-close { top: 18px; right: 22px; padding: 12px 14px; }
+  .archive-viewer-close { top: max(14px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); padding: 12px 14px; }
   .archive-viewer-nav {
     top: 50%;
     width: 46px;
@@ -361,29 +482,50 @@ const fallbackFor = (item: (typeof driveArchive)[number]) => {
     .archive-drive-masonry {
       columns: 2 150px;
       column-gap: 8px;
-      padding-top: 18px;
+      padding: 18px 10px 90px;
     }
     .archive-pin { margin-bottom: 18px; }
     .archive-pin-meta { font-size: 7px; }
+    .archive-pin-meta span:first-child { max-width: 68%; }
     .archive-viewer-shell {
-      width: calc(100vw - 24px);
-      padding: 58px 0 20px;
+      width: calc(100vw - 20px);
+      min-height: 100dvh;
+      padding: calc(56px + env(safe-area-inset-top)) 0 calc(76px + env(safe-area-inset-bottom));
       grid-template-columns: 1fr;
-      gap: 12px;
-      align-content: start;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-content: stretch;
     }
-    .archive-viewer-media { min-height: 0; }
-    .archive-viewer-media iframe { height: 70dvh; }
-    .archive-viewer-meta { align-self: auto; padding: 0 2px 18px; }
-    .archive-viewer-close { top: 10px; right: 10px; }
-    .archive-viewer-nav { top: auto; bottom: 14px; transform: none; }
-    .archive-viewer-prev { left: 12px; }
-    .archive-viewer-next { right: 12px; }
+    .archive-viewer-media { min-height: 0; max-height: 72dvh; }
+    .archive-viewer-media[data-kind="audio"] { max-height: none; align-self: center; }
+    .archive-native-video { max-height: 70dvh; }
+    .archive-audio-stage {
+      min-height: min(56dvh, 520px);
+      padding: 24px;
+      gap: 20px;
+    }
+    .archive-audio-art { width: min(260px, 62%); }
+    .archive-viewer-meta {
+      align-self: auto;
+      padding: 0 4px;
+      gap: 7px;
+    }
+    .archive-viewer-meta strong { font-size: clamp(24px, 8vw, 38px); }
+    .archive-viewer-close { top: max(9px, env(safe-area-inset-top)); right: 10px; }
+    .archive-viewer-nav {
+      top: auto;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      transform: none;
+    }
+    .archive-viewer-prev { left: 10px; }
+    .archive-viewer-next { right: 10px; }
   }
 
-  @media (max-width: 420px) {
-    .archive-drive-masonry { columns: 2; padding-inline: 9px; }
-    .archive-kind-badge { min-width: 0; padding: 7px; }
-    .archive-kind-badge span { display: none; }
+  @media (max-width: 340px) {
+    .archive-drive-masonry { columns: 1; padding-inline: 12px; }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .archive-pin-media:hover .archive-pin-thumb { transform: none; }
   }
 </style>
