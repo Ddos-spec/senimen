@@ -7,6 +7,7 @@ import '../../brand.css';
 import '../../media.css';
 import '../styles/rebuild.css';
 import '../styles/mobile.css';
+import '../styles/archive-drive.css';
 
 interface Props {
   title?: string;
@@ -22,7 +23,7 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const socialImage = image ? new URL(`${base}${image.replace(/^\/+/, '')}`, Astro.site) : undefined;
+const socialImage = image ? (image.startsWith('http') ? new URL(image) : new URL(`${base}${image.replace(/^\/+/, '')}`, Astro.site)) : undefined;
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
