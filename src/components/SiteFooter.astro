@@ -1,9 +1,12 @@
 ---
+import { brand } from '../data/brand';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
 
 <footer class="global-footer">
-  <div class="footer-wordmark">SENIMEN<sup>®</sup></div>
+  <a class="footer-brand" href={base} aria-label="SENIMEN, kembali ke beranda">
+    <img src={brand.logo} alt="" loading="lazy" decoding="async" />
+  </a>
   <p>Komunitas Seni & Kreatif Independen<br />Tangerang, Banten, Indonesia.</p>
   <div class="footer-nav">
     <a href={`${base}archive/`}>ARSIP</a>
@@ -15,3 +18,24 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
     <a href="https://wa.me/message/646EHTXQR66WO1" target="_blank" rel="noreferrer">WHATSAPP ↗</a>
   </div>
 </footer>
+
+<style>
+  .footer-brand {
+    width: min(260px, 100%);
+    height: 78px;
+    overflow: hidden;
+    display: block;
+    background: #050505;
+  }
+  .footer-brand img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.45);
+  }
+  @media (max-width: 760px) {
+    .footer-brand { width: 210px; height: 64px; }
+  }
+</style>
