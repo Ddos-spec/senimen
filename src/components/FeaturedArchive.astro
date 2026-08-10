@@ -1,7 +1,8 @@
 ---
 import { featuredMedia } from '../data/media';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const thumb = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w560`;
+const thumb = (id: string, width: number) => `https://drive.google.com/thumbnail?id=${id}&sz=w${width}`;
+const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 ---
 <section class="featured-strip">
   <div class="featured-head">
@@ -12,19 +13,29 @@ const thumb = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w5
     <a class="action-link magnetic" href={`${base}archive/`}>LIHAT SEMUA ↗</a>
   </div>
   <div class="featured-grid">
-    {featuredMedia.map((item, index) => (
-      <figure class="featured-card reveal-card">
-        <a href={`${base}archive/`} class="featured-drive-image" aria-label="Buka arsip SENIMEN">
-          <img
-            src={thumb(item.id)}
-            alt={`${item.group} — ${item.title}`}
-            loading={index < 2 ? 'eager' : 'lazy'}
-            fetchpriority={index < 2 ? 'high' : 'low'}
-            decoding="async"
-          />
-        </a>
-        <figcaption><span>{item.group}</span><span>{String(index + 1).padStart(2, '0')}</span></figcaption>
-      </figure>
-    ))}
+    {featuredMedia.map((item, index) => {
+      const src = thumb(item.id, 360);
+      const srcset = `${thumb(item.id, 260)} 260w, ${src} 360w, ${thumb(item.id, 460)} 460w`;
+      return (
+        <figure class="featured-card reveal-card">
+          <a href={`${base}archive/`} class="featured-drive-image" aria-label="Buka arsip SENIMEN">
+            <img
+              src={transparentPixel}
+              data-defer-src={src}
+              data-defer-srcset={srcset}
+              data-defer-sizes="(max-width: 480px) 78vw, (max-width: 760px) 46vw, 28vw"
+              alt={`${item.group} — ${item.title}`}
+              width="360"
+              height="450"
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+            />
+            <noscript><img src={src} alt={`${item.group} — ${item.title}`} loading="lazy" decoding="async" /></noscript>
+          </a>
+          <figcaption><span>{item.group}</span><span>{String(index + 1).padStart(2, '0')}</span></figcaption>
+        </figure>
+      );
+    })}
   </div>
 </section>
