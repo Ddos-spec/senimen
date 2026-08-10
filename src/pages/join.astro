@@ -3,11 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { social } from '../data/site';
 import { brand } from '../data/brand';
 ---
-<BaseLayout title="Gabung & Kolaborasi — SENIMEN" description="Gabung, kirim karya, hubungi admin, atau buka kolaborasi dengan SENIMEN." image={brand.collab}>
+<BaseLayout title="Gabung — SENIMEN" description="Kirim karya, ngobrol, atau bikin sesuatu bareng SENIMEN." image={brand.collab}>
   <main class="page join-page">
     <section class="route-hero join-hero">
       <div class="route-hero-grid join-hero-grid">
-        <div><span class="page-kicker">BERGABUNG / KOLABORASI</span><h1 class="page-title">TUMBUH<br />BARENG.</h1></div>
+        <div><span class="page-kicker">GABUNG / SENIMEN</span><h1 class="page-title">BAWA<br />SESUATU.</h1></div>
         <figure class="join-brand-hero">
           <img src={brand.collab} alt="Kolaborasi SENIMEN" width="1000" height="1000" fetchpriority="high" decoding="async" />
         </figure>
@@ -15,12 +15,12 @@ import { brand } from '../data/brand';
     </section>
 
     <section class="join-actions">
-      <div><span class="page-kicker">PILIH JALUR</span><h2>MASUK KE<br />RUANGNYA.</h2></div>
+      <div><span class="page-kicker">PILIH AJA</span><h2>MAU MASUK<br />LEWAT MANA?</h2></div>
       <div class="join-links">
-        <a class="join-link" href={social.instagram} target="_blank" rel="noreferrer"><span>INSTAGRAM / @KOMUNITAS_SENIMEN</span><span>↗</span></a>
-        <a class="join-link" href={social.submit} target="_blank" rel="noreferrer"><span>SUBMIT KARYA / ARSIP KOLEKTIF</span><span>↗</span></a>
-        <a class="join-link" href={social.whatsapp} target="_blank" rel="noreferrer"><span>WHATSAPP / HUBUNGI ADMIN</span><span>↗</span></a>
-        <a class="join-link" href={`mailto:${social.email}`}><span>EMAIL / {social.email}</span><span>↗</span></a>
+        <a class="join-link" href={social.instagram} target="_blank" rel="noreferrer"><span>LIHAT INSTAGRAM</span><span>↗</span></a>
+        <a class="join-link" href={social.submit} target="_blank" rel="noreferrer"><span>KIRIM KARYA</span><span>↗</span></a>
+        <a class="join-link" href={social.whatsapp} target="_blank" rel="noreferrer"><span>NGOBROL VIA WHATSAPP</span><span>↗</span></a>
+        <a class="join-link" href={`mailto:${social.email}`}><span>KIRIM EMAIL</span><span>↗</span></a>
       </div>
     </section>
 
