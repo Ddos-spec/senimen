@@ -1,0 +1,89 @@
+---
+interface Props {
+  word: 'SENI' | 'MEN';
+  tone?: 'black' | 'pink';
+  class?: string;
+}
+
+const { word, tone = 'black', class: className = '' } = Astro.props;
+const stroke = tone === 'pink' ? 'var(--senimen-pink)' : 'var(--senimen-black)';
+const filterId = `rough-${word.toLowerCase()}`;
+---
+
+{word === 'SENI' ? (
+  <svg class={`graffiti-word ${className}`} viewBox="0 0 900 260" role="img" aria-label="SENI" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <filter id={filterId} x="-8%" y="-12%" width="116%" height="124%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.045" numOctaves="2" seed="27" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+    <g fill="none" stroke={stroke} stroke-width="34" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${filterId})`}>
+      <g transform="translate(5 2) rotate(-5 112 128)">
+        <path d="M180 45 C145 13 73 17 43 62 C19 99 57 118 118 127 C183 136 203 171 175 207 C143 248 69 235 36 195" />
+        <path opacity=".22" stroke-width="11" d="M173 49 C137 25 82 23 51 64 M170 205 C136 229 84 228 45 197" />
+      </g>
+      <g transform="translate(225 -6) rotate(3 120 130)">
+        <path d="M38 37 L35 220" />
+        <path d="M37 42 L180 34" />
+        <path d="M38 126 L150 119" />
+        <path d="M36 220 L184 210" />
+      </g>
+      <g transform="translate(442 5) rotate(-4 118 128)">
+        <path d="M34 221 L43 37" />
+        <path d="M44 40 L183 217" />
+        <path d="M183 217 L190 31" />
+      </g>
+      <g transform="translate(684 2) rotate(5 82 128)">
+        <path d="M82 37 L75 218" />
+        <path d="M34 38 L132 31" />
+        <path d="M27 221 L126 213" />
+      </g>
+    </g>
+    <g fill="none" stroke={stroke} stroke-width="5" stroke-linecap="round" opacity=".55">
+      <path d="M22 238 C190 249 362 228 521 244 C680 258 812 236 878 244" />
+      <path d="M16 228 C120 236 207 219 303 230" opacity=".35" />
+    </g>
+  </svg>
+) : (
+  <svg class={`graffiti-word ${className}`} viewBox="0 0 720 260" role="img" aria-label="MEN" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <filter id={filterId} x="-8%" y="-12%" width="116%" height="124%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.014 0.05" numOctaves="2" seed="71" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="5.5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+    <g fill="none" stroke={stroke} stroke-width="34" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${filterId})`}>
+      <g transform="translate(6 0) rotate(-4 116 128)">
+        <path d="M34 219 L42 35" />
+        <path d="M43 37 L116 155" />
+        <path d="M116 155 L190 31" />
+        <path d="M191 33 L194 219" />
+      </g>
+      <g transform="translate(257 3) rotate(4 108 126)">
+        <path d="M35 37 L31 218" />
+        <path d="M36 39 L176 33" />
+        <path d="M34 126 L145 119" />
+        <path d="M32 218 L180 211" />
+      </g>
+      <g transform="translate(472 2) rotate(-5 112 128)">
+        <path d="M31 221 L41 36" />
+        <path d="M42 39 L176 218" />
+        <path d="M176 218 L188 32" />
+      </g>
+    </g>
+    <g fill="none" stroke={stroke} stroke-width="5" stroke-linecap="round" opacity=".6">
+      <path d="M17 240 C140 252 258 229 371 245 C486 260 595 236 699 244" />
+      <path d="M28 230 C101 236 170 223 236 231" opacity=".3" />
+    </g>
+  </svg>
+)}
+
+<style>
+  .graffiti-word {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+</style>
