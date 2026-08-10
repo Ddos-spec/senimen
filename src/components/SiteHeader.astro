@@ -11,7 +11,7 @@ const nav = [
 ---
 <header class="global-header" data-header>
   <a class="senimen-wordmark magnetic" href={base} aria-label="SENIMEN, kembali ke beranda">
-    <img src={brand.logo} alt="" width="900" height="360" decoding="async" fetchpriority="high" />
+    <img src={brand.logoSmall} alt="" width="360" height="144" decoding="async" fetchpriority="low" />
   </a>
   <nav class="desktop-nav" aria-label="Navigasi utama">
     {nav.map(([label, href]) => (
@@ -21,7 +21,7 @@ const nav = [
   <button class="menu-toggle magnetic" aria-expanded="false" aria-controls="site-menu"><span>MENU</span><i></i></button>
 </header>
 
-<nav class="menu" id="site-menu" aria-hidden="true">
+<nav class="menu" id="site-menu" aria-hidden="true" inert>
   <div class="menu-noise"></div>
   <div class="menu-index">INDEX / 001—004</div>
   {nav.map(([label, href], index) => (
