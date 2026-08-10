@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { social } from '../data/site';
 import { brand } from '../data/brand';
+const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 ---
 <BaseLayout title="Gabung — SENIMEN" description="Kirim karya, ngobrol, atau bikin sesuatu bareng SENIMEN." image={brand.collab}>
   <main class="page join-page">
@@ -9,7 +10,7 @@ import { brand } from '../data/brand';
       <div class="route-hero-grid join-hero-grid">
         <div><span class="page-kicker">GABUNG / SENIMEN</span><h1 class="page-title">BAWA<br />SESUATU.</h1></div>
         <figure class="join-brand-hero">
-          <img src={brand.collab} alt="Kolaborasi SENIMEN" width="1000" height="1000" fetchpriority="high" decoding="async" />
+          <img src={brand.collab} alt="Kolaborasi SENIMEN" width="720" height="720" loading="eager" fetchpriority="high" decoding="async" />
         </figure>
       </div>
     </section>
@@ -26,11 +27,13 @@ import { brand } from '../data/brand';
 
     <section class="join-brand-grid" aria-label="Aset resmi SENIMEN">
       <figure class="join-brand-card">
-        <img src={brand.joinQr} alt="QR untuk bergabung dengan SENIMEN" loading="lazy" decoding="async" />
+        <img src={transparentPixel} data-defer-src={brand.joinQr} alt="QR untuk bergabung dengan SENIMEN" width="520" height="520" loading="lazy" decoding="async" fetchpriority="low" />
+        <noscript><img src={brand.joinQr} alt="QR untuk bergabung dengan SENIMEN" loading="lazy" decoding="async" /></noscript>
         <figcaption>JOIN SENIMEN</figcaption>
       </figure>
       <a class="join-brand-card" href={social.submit} target="_blank" rel="noreferrer">
-        <img src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" loading="lazy" decoding="async" />
+        <img src={transparentPixel} data-defer-src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" width="520" height="520" loading="lazy" decoding="async" fetchpriority="low" />
+        <noscript><img src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" loading="lazy" decoding="async" /></noscript>
         <span class="join-brand-caption">KIRIM KARYA ↗</span>
       </a>
     </section>
