@@ -1,16 +1,33 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { driveArchive } from '../data/media';
+import { brand } from '../data/brand';
 
 const total = driveArchive.length;
 const imageCount = driveArchive.filter((item) => item.kind === 'image').length;
 const motionCount = driveArchive.filter((item) => item.kind === 'video').length;
 const audioCount = driveArchive.filter((item) => item.kind === 'audio').length;
 
-const gridThumb = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w600`;
-const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w2000`;
+const gridThumb = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w420`;
+const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w1800`;
+const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
+const thumbFor = (item: (typeof driveArchive)[number]) => {
+  if (item.kind === 'audio') return brand.logoSmall;
+  return gridThumb(item.id);
+};
+
+const fallbackFor = (item: (typeof driveArchive)[number]) => {
+  if (item.kind === 'audio') return brand.logoSmall;
+  if (item.kind === 'video') {
+    const group = item.group.toUpperCase();
+    if (group.includes('WAWANCARA') || group.includes('INTERVIEW') || group.includes('FILM')) return brand.tanyaTanya;
+    return brand.balikLayar;
+  }
+  return brand.logoSmall;
+};
 ---
-<BaseLayout title="Arsip — SENIMEN" description="Arsip foto, video, dan suara SENIMEN dari keluaran resmi CONTENT JUNI.">
+<BaseLayout title="Arsip — SENIMEN" description="Arsip foto, video, dan suara SENIMEN dari keluaran resmi CONTENT JUNI." image={brand.og}>
   <main class="page archive-page">
     <section class="route-hero archive-drive-hero">
       <div>
@@ -21,49 +38,60 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
     </section>
 
     <section class="archive-masonry archive-drive-masonry" aria-label="Arsip media SENIMEN">
-      {driveArchive.map((item, index) => (
-        <article class={`archive-pin archive-pin--${item.kind}`}>
-          <button
-            type="button"
-            class="archive-pin-media archive-pin-trigger"
-            aria-label={`Lihat ${item.group} — ${item.title}`}
-            data-kind={item.kind}
-            data-title={item.title}
-            data-group={item.group}
-            data-image={item.kind === 'image' ? fullImage(item.id) : ''}
-            data-preview={item.kind !== 'image' ? item.previewUrl : ''}
-          >
-            {item.kind === 'image' ? (
+      {driveArchive.map((item, index) => {
+        const thumb = thumbFor(item);
+        const fallback = fallbackFor(item);
+        const eager = index < 8;
+        return (
+          <article class={`archive-pin archive-pin--${item.kind}`}>
+            <button
+              type="button"
+              class="archive-pin-media archive-pin-trigger"
+              aria-label={`Lihat ${item.group} — ${item.title}`}
+              data-index={index}
+              data-kind={item.kind}
+              data-title={item.title}
+              data-group={item.group}
+              data-image={item.kind === 'image' ? fullImage(item.id) : ''}
+              data-preview={item.kind !== 'image' ? item.previewUrl : ''}
+            >
               <img
-                src={gridThumb(item.id)}
+                class="archive-pin-thumb"
+                src={eager ? thumb : transparentPixel}
+                data-src={eager ? undefined : thumb}
+                data-fallback={fallback}
                 alt={`${item.group} — ${item.title}`}
-                loading={index < 4 ? 'eager' : 'lazy'}
-                fetchpriority={index < 2 ? 'high' : 'auto'}
+                loading={eager ? 'eager' : 'lazy'}
+                fetchpriority={index < 3 ? 'high' : 'low'}
                 decoding="async"
               />
-            ) : (
-              <span class="archive-media-placeholder" aria-hidden="true">
-                <span class="archive-media-kind">{item.kind === 'video' ? '▶' : '♪'}</span>
-                <span>{item.kind === 'video' ? 'VIDEO' : 'AUDIO'}</span>
-              </span>
-            )}
-          </button>
-          <div class="archive-pin-meta">
-            <span>{item.group}</span>
-            <span>{item.kind.toUpperCase()} / {String(index + 1).padStart(2, '0')}</span>
-          </div>
-        </article>
-      ))}
+              {item.kind !== 'image' && (
+                <span class="archive-kind-badge" aria-hidden="true">
+                  <b>{item.kind === 'video' ? '▶' : '♪'}</b>
+                  <span>{item.kind === 'video' ? 'VIDEO' : 'AUDIO'}</span>
+                </span>
+              )}
+            </button>
+            <div class="archive-pin-meta">
+              <span>{item.group}</span>
+              <span>{item.kind.toUpperCase()} / {String(index + 1).padStart(2, '0')}</span>
+            </div>
+          </article>
+        );
+      })}
     </section>
   </main>
 
   <dialog class="archive-viewer" id="archive-viewer" aria-label="Viewer arsip SENIMEN">
     <button class="archive-viewer-close" type="button" aria-label="Tutup viewer">TUTUP ×</button>
+    <button class="archive-viewer-nav archive-viewer-prev" type="button" aria-label="Media sebelumnya">←</button>
+    <button class="archive-viewer-nav archive-viewer-next" type="button" aria-label="Media berikutnya">→</button>
     <div class="archive-viewer-shell">
       <div class="archive-viewer-media" id="archive-viewer-media"></div>
       <div class="archive-viewer-meta">
         <span id="archive-viewer-group"></span>
         <strong id="archive-viewer-title"></strong>
+        <small id="archive-viewer-count"></small>
       </div>
     </div>
   </dialog>
@@ -74,49 +102,96 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
       const media = document.getElementById('archive-viewer-media');
       const title = document.getElementById('archive-viewer-title');
       const group = document.getElementById('archive-viewer-group');
+      const count = document.getElementById('archive-viewer-count');
       const close = dialog?.querySelector('.archive-viewer-close');
+      const prev = dialog?.querySelector('.archive-viewer-prev');
+      const next = dialog?.querySelector('.archive-viewer-next');
+      const triggers = Array.from(document.querySelectorAll('.archive-pin-trigger'));
+      const deferred = Array.from(document.querySelectorAll('.archive-pin-thumb[data-src]'));
 
-      if (!(dialog instanceof HTMLDialogElement) || !media || !title || !group) return;
-
-      const clearMedia = () => {
-        media.replaceChildren();
+      const hydrate = (img) => {
+        if (!(img instanceof HTMLImageElement)) return;
+        const src = img.dataset.src;
+        if (!src) return;
+        img.src = src;
+        delete img.dataset.src;
       };
 
-      document.querySelectorAll('.archive-pin-trigger').forEach((trigger) => {
-        trigger.addEventListener('click', () => {
-          if (!(trigger instanceof HTMLElement)) return;
-          clearMedia();
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            hydrate(entry.target);
+            observer.unobserve(entry.target);
+          });
+        }, { rootMargin: '650px 0px' });
+        deferred.forEach((img) => observer.observe(img));
+      } else {
+        deferred.forEach(hydrate);
+      }
 
-          const kind = trigger.dataset.kind || '';
-          const itemTitle = trigger.dataset.title || '';
-          const itemGroup = trigger.dataset.group || '';
-          title.textContent = itemTitle;
-          group.textContent = itemGroup;
-
-          if (kind === 'image') {
-            const img = document.createElement('img');
-            img.src = trigger.dataset.image || '';
-            img.alt = `${itemGroup} — ${itemTitle}`;
-            img.decoding = 'async';
-            media.append(img);
-          } else {
-            const frame = document.createElement('iframe');
-            frame.src = trigger.dataset.preview || '';
-            frame.title = `${itemGroup} — ${itemTitle}`;
-            frame.allow = 'autoplay; fullscreen';
-            frame.allowFullscreen = true;
-            frame.loading = 'eager';
-            media.append(frame);
-          }
-
-          dialog.showModal();
-          document.documentElement.classList.add('archive-viewer-open');
-        });
+      document.querySelectorAll('.archive-pin-thumb').forEach((node) => {
+        node.addEventListener('error', () => {
+          if (!(node instanceof HTMLImageElement)) return;
+          const fallback = node.dataset.fallback;
+          if (!fallback || node.src === fallback) return;
+          node.src = fallback;
+          delete node.dataset.src;
+        }, { once: true });
       });
+
+      if (!(dialog instanceof HTMLDialogElement) || !media || !title || !group || !count) return;
+
+      let activeIndex = 0;
+      const clearMedia = () => media.replaceChildren();
+
+      const renderAt = (index) => {
+        if (!triggers.length) return;
+        activeIndex = (index + triggers.length) % triggers.length;
+        const trigger = triggers[activeIndex];
+        if (!(trigger instanceof HTMLElement)) return;
+
+        clearMedia();
+        const kind = trigger.dataset.kind || '';
+        const itemTitle = trigger.dataset.title || '';
+        const itemGroup = trigger.dataset.group || '';
+        title.textContent = itemTitle;
+        group.textContent = itemGroup;
+        count.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(triggers.length).padStart(2, '0')}`;
+
+        if (kind === 'image') {
+          const img = document.createElement('img');
+          img.src = trigger.dataset.image || '';
+          img.alt = `${itemGroup} — ${itemTitle}`;
+          img.decoding = 'async';
+          media.append(img);
+        } else {
+          const frame = document.createElement('iframe');
+          frame.src = trigger.dataset.preview || '';
+          frame.title = `${itemGroup} — ${itemTitle}`;
+          frame.allow = 'autoplay; fullscreen';
+          frame.allowFullscreen = true;
+          frame.loading = 'eager';
+          media.append(frame);
+        }
+      };
+
+      const openAt = (index) => {
+        renderAt(index);
+        if (!dialog.open) dialog.showModal();
+        document.documentElement.classList.add('archive-viewer-open');
+      };
+
+      triggers.forEach((trigger, index) => {
+        trigger.addEventListener('click', () => openAt(index));
+      });
+
+      prev?.addEventListener('click', () => renderAt(activeIndex - 1));
+      next?.addEventListener('click', () => renderAt(activeIndex + 1));
 
       const closeViewer = () => {
         clearMedia();
-        dialog.close();
+        if (dialog.open) dialog.close();
         document.documentElement.classList.remove('archive-viewer-open');
       };
 
@@ -128,6 +203,11 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
         clearMedia();
         document.documentElement.classList.remove('archive-viewer-open');
       });
+      document.addEventListener('keydown', (event) => {
+        if (!dialog.open) return;
+        if (event.key === 'ArrowLeft') renderAt(activeIndex - 1);
+        if (event.key === 'ArrowRight') renderAt(activeIndex + 1);
+      });
     })();
   </script>
 </BaseLayout>
@@ -135,54 +215,54 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
 <style>
   .archive-drive-masonry {
     columns: 5 220px;
-    column-gap: 14px;
-    padding-top: 28px;
+    column-gap: 12px;
+    padding-top: 26px;
   }
   .archive-pin {
     break-inside: avoid;
-    margin: 0 0 28px;
+    margin: 0 0 24px;
   }
   .archive-pin-media {
+    position: relative;
     width: 100%;
+    aspect-ratio: 4 / 5;
     padding: 0;
     display: block;
     overflow: hidden;
     border: 0;
-    background: #151515;
+    background: linear-gradient(135deg, #111, #1b1b1b);
     color: #fff;
     cursor: zoom-in;
     text-align: left;
   }
-  .archive-pin-media img {
+  .archive-pin:nth-child(5n + 2) .archive-pin-media { aspect-ratio: 1 / 1; }
+  .archive-pin:nth-child(7n + 3) .archive-pin-media { aspect-ratio: 3 / 4; }
+  .archive-pin:nth-child(9n + 4) .archive-pin-media { aspect-ratio: 16 / 11; }
+  .archive-pin-thumb {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
+    object-fit: cover;
+    background: #111;
     transition: transform .35s ease, opacity .25s ease;
   }
-  .archive-pin-media:hover img { transform: scale(1.018); }
-  .archive-media-placeholder {
-    min-height: 220px;
-    aspect-ratio: 4 / 5;
+  .archive-pin-media:hover .archive-pin-thumb { transform: scale(1.025); }
+  .archive-kind-badge {
+    position: absolute;
+    inset: auto 10px 10px auto;
+    min-width: 64px;
+    padding: 8px 10px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    background: #111;
-    font: 500 9px/1 var(--mono);
-    letter-spacing: .09em;
+    gap: 7px;
+    background: rgba(5,5,5,.82);
+    border: 1px solid rgba(255,255,255,.3);
+    backdrop-filter: blur(8px);
+    font: 500 8px/1 var(--mono);
+    letter-spacing: .07em;
   }
-  .archive-pin--video .archive-media-placeholder { aspect-ratio: 9 / 16; }
-  .archive-pin--audio .archive-media-placeholder { aspect-ratio: 1 / 1; }
-  .archive-media-kind {
-    width: 58px;
-    height: 58px;
-    display: grid;
-    place-items: center;
-    border: 1px solid #444;
-    border-radius: 50%;
-    font-size: 21px;
-  }
+  .archive-kind-badge b { font-size: 12px; font-weight: 500; }
   .archive-pin-meta {
     display: flex;
     justify-content: space-between;
@@ -200,22 +280,22 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
     margin: 0;
     padding: 0;
     border: 0;
-    background: rgba(0,0,0,.94);
+    background: rgba(0,0,0,.95);
     color: #fff;
   }
-  .archive-viewer::backdrop { background: rgba(0,0,0,.88); }
+  .archive-viewer::backdrop { background: rgba(0,0,0,.9); }
   .archive-viewer-shell {
-    width: min(1180px, calc(100vw - 48px));
+    width: min(1180px, calc(100vw - 80px));
     min-height: 100dvh;
     margin: 0 auto;
-    padding: 72px 0 38px;
+    padding: 64px 0 34px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
     gap: 28px;
     align-items: center;
   }
   .archive-viewer-media {
-    min-height: 70dvh;
+    min-height: 72dvh;
     display: grid;
     place-items: center;
     overflow: hidden;
@@ -223,7 +303,7 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
   }
   .archive-viewer-media img {
     max-width: 100%;
-    max-height: 86dvh;
+    max-height: 88dvh;
     width: auto;
     height: auto;
     display: block;
@@ -231,7 +311,7 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
   }
   .archive-viewer-media iframe {
     width: 100%;
-    height: min(82dvh, 820px);
+    height: min(84dvh, 840px);
     border: 0;
     background: #000;
   }
@@ -241,7 +321,8 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
     display: grid;
     gap: 10px;
   }
-  .archive-viewer-meta span {
+  .archive-viewer-meta span,
+  .archive-viewer-meta small {
     color: #999;
     font: 500 9px/1.3 var(--mono);
     letter-spacing: .06em;
@@ -251,42 +332,58 @@ const fullImage = (id: string) => `https://drive.google.com/thumbnail?id=${id}&s
     line-height: .95;
     letter-spacing: -.05em;
   }
-  .archive-viewer-close {
+  .archive-viewer-close,
+  .archive-viewer-nav {
     position: fixed;
     z-index: 4;
-    top: 18px;
-    right: 22px;
-    padding: 12px 14px;
     border: 1px solid #555;
-    background: #111;
+    background: rgba(17,17,17,.92);
     color: #fff;
     cursor: pointer;
     font: 500 9px/1 var(--mono);
+    backdrop-filter: blur(8px);
   }
+  .archive-viewer-close { top: 18px; right: 22px; padding: 12px 14px; }
+  .archive-viewer-nav {
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    transform: translateY(-50%);
+    font-size: 18px;
+  }
+  .archive-viewer-prev { left: 16px; }
+  .archive-viewer-next { right: 16px; }
   :global(html.archive-viewer-open) { overflow: hidden; }
 
   @media (max-width: 760px) {
     .archive-drive-masonry {
       columns: 2 150px;
-      column-gap: 9px;
-      padding-top: 20px;
+      column-gap: 8px;
+      padding-top: 18px;
     }
-    .archive-pin { margin-bottom: 20px; }
-    .archive-media-placeholder { min-height: 150px; }
+    .archive-pin { margin-bottom: 18px; }
+    .archive-pin-meta { font-size: 7px; }
     .archive-viewer-shell {
       width: calc(100vw - 24px);
-      padding: 62px 0 22px;
+      padding: 58px 0 20px;
       grid-template-columns: 1fr;
-      gap: 14px;
+      gap: 12px;
       align-content: start;
     }
     .archive-viewer-media { min-height: 0; }
-    .archive-viewer-media iframe { height: 72dvh; }
-    .archive-viewer-meta { align-self: auto; padding: 0 2px 20px; }
-    .archive-viewer-close { top: 12px; right: 12px; }
+    .archive-viewer-media iframe { height: 70dvh; }
+    .archive-viewer-meta { align-self: auto; padding: 0 2px 18px; }
+    .archive-viewer-close { top: 10px; right: 10px; }
+    .archive-viewer-nav { top: auto; bottom: 14px; transform: none; }
+    .archive-viewer-prev { left: 12px; }
+    .archive-viewer-next { right: 12px; }
   }
 
   @media (max-width: 420px) {
-    .archive-drive-masonry { columns: 2; padding-inline: 10px; }
+    .archive-drive-masonry { columns: 2; padding-inline: 9px; }
+    .archive-kind-badge { min-width: 0; padding: 7px; }
+    .archive-kind-badge span { display: none; }
   }
 </style>
