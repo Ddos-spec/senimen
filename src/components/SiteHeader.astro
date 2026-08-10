@@ -1,37 +1,28 @@
 ---
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const pathname = Astro.url.pathname;
-const links = [
-  ['TENTANG', `${base}about/`],
-  ['ARSIP', `${base}archive/`],
-  ['REELS', `${base}reels/`],
-  ['ARTIKEL', `${base}articles/`],
-  ['GABUNG', `${base}join/`],
+const nav = [
+  ['TENTANG', 'about/'],
+  ['ARSIP', 'archive/'],
+  ['ARTIKEL', 'articles/'],
+  ['GABUNG', 'join/'],
 ] as const;
 ---
-
 <header class="global-header" data-header>
-  <a class="senimen-wordmark magnetic" href={base} aria-label="SENIMEN — beranda">
-    <span>SENIMEN</span><sup>®</sup>
-  </a>
-
+  <a class="senimen-wordmark magnetic" href={base} aria-label="SENIMEN, kembali ke beranda">SENIMEN<sup>®</sup></a>
   <nav class="desktop-nav" aria-label="Navigasi utama">
-    {links.map(([label, href]) => (
-      <a href={href} aria-current={pathname === href ? 'page' : undefined}>{label}</a>
+    {nav.map(([label, href]) => (
+      <a href={`${base}${href}`} aria-current={pathname.includes(`/${href}`) ? 'page' : undefined}>{label}</a>
     ))}
   </nav>
-
-  <button class="menu-toggle magnetic" aria-expanded="false" aria-controls="site-menu">
-    <span>MENU</span><i></i>
-  </button>
+  <button class="menu-toggle magnetic" aria-expanded="false" aria-controls="site-menu"><span>MENU</span><i></i></button>
 </header>
 
-<nav class="menu" id="site-menu" aria-hidden="true" aria-label="Navigasi layar penuh">
+<nav class="menu" id="site-menu" aria-hidden="true">
   <div class="menu-noise"></div>
-  <div class="menu-index">SENIMEN / INDEX</div>
-  <a href={base} data-menu-link><span>00</span> Home</a>
-  {links.map(([label, href], index) => (
-    <a href={href} data-menu-link><span>{String(index + 1).padStart(2, '0')}</span> {label}</a>
+  <div class="menu-index">INDEX / 001—004</div>
+  {nav.map(([label, href], index) => (
+    <a href={`${base}${href}`} data-menu-link><span>{String(index + 1).padStart(2, '0')}</span>{label}</a>
   ))}
-  <a class="menu-instagram" href="https://www.instagram.com/komunitas_senimen/" target="_blank" rel="noreferrer">@KOMUNITAS_SENIMEN ↗</a>
+  <a class="menu-instagram" href="https://www.instagram.com/komunitas_senimen/" target="_blank" rel="noreferrer">INSTAGRAM ↗</a>
 </nav>
