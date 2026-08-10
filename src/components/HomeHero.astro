@@ -1,7 +1,7 @@
 ---
-import MediaSlot from './MediaSlot.astro';
 import GraffitiWord from './GraffitiWord.astro';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcunfsd18qPn_S&sz=w1600';
 ---
 
 <section class="hero-classic" aria-labelledby="senimen-home-title">
@@ -18,13 +18,8 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
     </h1>
 
     <div class="hero-classic-poster reveal-card">
-      <MediaSlot
-        src="images/carousel_all/slide_20.jpg"
-        alt="Dokumentasi visual SENIMEN"
-        priority={true}
-        labelLeft="SENIMEN / ARCHIVE"
-        labelRight="TANGERANG"
-      />
+      <img src={heroImage} alt="Dokumentasi visual SENIMEN" loading="eager" decoding="async" fetchpriority="high" />
+      <div class="hero-poster-label"><span>SENIMEN / ARCHIVE</span><span>TANGERANG</span></div>
     </div>
 
     <div class="hero-classic-stamp" aria-hidden="true">
@@ -91,10 +86,13 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
     z-index:3;
     width:min(30vw,465px);
     min-width:300px;
+    overflow:hidden;
+    background:#ececea;
     transform:rotate(-2deg);
     box-shadow:0 24px 70px rgba(0,0,0,.14);
   }
-  .hero-classic-poster :global(.media-slot) { width:100%; aspect-ratio:3/4; }
+  .hero-classic-poster > img { width:100%; aspect-ratio:3/4; display:block; object-fit:cover; }
+  .hero-poster-label { position:absolute; inset:auto 12px 12px; display:flex; justify-content:space-between; gap:10px; padding:8px 9px; background:rgba(5,5,5,.78); color:#fff; font:500 8px/1 var(--mono); }
   .hero-classic-stamp {
     position:absolute;
     z-index:7;
