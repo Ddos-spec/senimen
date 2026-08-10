@@ -1,26 +1,45 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import MediaSlot from '../components/MediaSlot.astro';
-import { carouselSlides } from '../data/media';
+import { driveArchive } from '../data/media';
+
+const total = driveArchive.length;
+const imageCount = driveArchive.filter((item) => item.kind === 'image').length;
+const motionCount = driveArchive.filter((item) => item.kind === 'video').length;
+const audioCount = driveArchive.filter((item) => item.kind === 'audio').length;
 ---
-<BaseLayout title="Arsip Visual — SENIMEN" description="193 frame dokumentasi visual SENIMEN dari arsip komunitas seni dan kreatif independen Tangerang." image="images/carousel_all/slide_108.jpg">
+<BaseLayout title="Arsip — SENIMEN" description="Arsip foto, video, dan suara SENIMEN dari keluaran resmi CONTENT JUNI.">
   <main class="page archive-page">
-    <section class="route-hero">
-      <div class="route-hero-grid">
-        <div><span class="page-kicker">ARSIP / 193 FRAME</span><h1 class="page-title">LIVING<br /><em>ARCHIVE.</em></h1></div>
-        <p class="page-lead">Bukan sepuluh gambar dekoratif. Koleksi foto yang sudah dikumpulkan masuk ke satu index visual lengkap dan tetap lazy-load supaya halaman tidak membebani browser sekaligus.</p>
+    <section class="route-hero archive-drive-hero">
+      <div>
+        <span class="page-kicker">ARSIP / SENIMEN</span>
+        <h1 class="page-title">ARSIP.</h1>
       </div>
-      <div class="route-count">193 BERKAS / CAROUSEL ALL / SENIMEN</div>
+      <div class="route-count">{total} BERKAS / {imageCount} FOTO / {motionCount} VIDEO / {audioCount} AUDIO</div>
     </section>
 
-    <div class="archive-toolbar"><span>ALL FRAMES / 001—193</span><span>SCROLL TO BROWSE</span></div>
-
-    <section class="archive-masonry" aria-label="193 dokumentasi visual SENIMEN">
-      {carouselSlides.map((frame, index) => (
-        <figure class="archive-item">
-          <MediaSlot src={frame.src} alt={frame.alt} />
-          <figcaption><span>{frame.label}</span><span>{String(index + 1).padStart(3, '0')} / 193</span></figcaption>
-        </figure>
+    <section class="archive-masonry archive-drive-masonry" aria-label="Arsip media SENIMEN">
+      {driveArchive.map((item, index) => (
+        <article class={`archive-pin archive-pin--${item.kind}`}>
+          {item.kind === 'image' ? (
+            <a href={item.viewUrl} target="_blank" rel="noreferrer" class="archive-pin-media" aria-label={`Buka ${item.title}`}>
+              <img src={item.thumbnailUrl} alt={`${item.group} — ${item.title}`} loading={index < 6 ? 'eager' : 'lazy'} decoding="async" />
+            </a>
+          ) : (
+            <div class="archive-pin-media archive-pin-embed">
+              <iframe
+                src={item.previewUrl}
+                title={`${item.group} — ${item.title}`}
+                loading="lazy"
+                allow="autoplay; fullscreen"
+                allowfullscreen
+              ></iframe>
+            </div>
+          )}
+          <div class="archive-pin-meta">
+            <span>{item.group}</span>
+            <span>{item.kind.toUpperCase()} / {String(index + 1).padStart(2, '0')}</span>
+          </div>
+        </article>
       ))}
     </section>
   </main>
