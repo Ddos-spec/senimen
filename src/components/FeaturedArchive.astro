@@ -1,6 +1,7 @@
 ---
 import { featuredMedia } from '../data/media';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const thumb = (id: string) => `https://drive.google.com/thumbnail?id=${id}&sz=w560`;
 ---
 <section class="featured-strip">
   <div class="featured-head">
@@ -14,7 +15,13 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
     {featuredMedia.map((item, index) => (
       <figure class="featured-card reveal-card">
         <a href={`${base}archive/`} class="featured-drive-image" aria-label="Buka arsip SENIMEN">
-          <img src={item.thumbnailUrl} alt={`${item.group} — ${item.title}`} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" />
+          <img
+            src={thumb(item.id)}
+            alt={`${item.group} — ${item.title}`}
+            loading={index < 2 ? 'eager' : 'lazy'}
+            fetchpriority={index < 2 ? 'high' : 'low'}
+            decoding="async"
+          />
         </a>
         <figcaption><span>{item.group}</span><span>{String(index + 1).padStart(2, '0')}</span></figcaption>
       </figure>
