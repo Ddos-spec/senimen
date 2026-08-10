@@ -9,6 +9,7 @@ import '../../media.css';
 import '../styles/rebuild.css';
 import '../styles/mobile.css';
 import '../styles/archive-drive.css';
+import '../styles/mobile-polish.css';
 
 interface Props {
   title?: string;
@@ -18,7 +19,7 @@ interface Props {
 
 const {
   title = 'SENIMEN — Komunitas Seni & Kreatif Independen',
-  description = 'SENIMEN — Komunitas Seni & Kreatif Independen di Tangerang. Dokumentasi proses, perspektif, ekspresi, kolaborasi, arsip visual, dan tulisan edukasi.',
+  description = 'SENIMEN adalah ruang seni independen di Tangerang untuk karya, arsip, acara, obrolan, dan kolaborasi.',
   image,
 } = Astro.props;
 
@@ -64,6 +65,8 @@ const schema = {
     <link rel="apple-touch-icon" href={brand.og} />
     <link rel="preconnect" href="https://drive.google.com" />
     <link rel="dns-prefetch" href="https://drive.google.com" />
+    <link rel="preconnect" href="https://drive.usercontent.google.com" />
+    <link rel="dns-prefetch" href="https://drive.usercontent.google.com" />
     <link rel="preconnect" href="https://lh3.googleusercontent.com" />
     <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
     <title>{title}</title>
