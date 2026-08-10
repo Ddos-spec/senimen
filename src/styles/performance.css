@@ -1,0 +1,54 @@
+:root {
+  --sans: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+img[data-defer-src] {
+  background: #111;
+}
+
+.featured-strip,
+.home-articles,
+.pink-manifesto,
+.about-body,
+.articles-index,
+.article-body,
+.join-actions,
+.join-brand-grid,
+.global-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
+.archive-pin {
+  content-visibility: auto;
+  contain-intrinsic-size: 280px 380px;
+}
+
+@media (max-width: 760px) {
+  .noise {
+    display: none;
+  }
+
+  .featured-strip,
+  .home-articles,
+  .pink-manifesto,
+  .about-body,
+  .articles-index,
+  .article-body,
+  .join-actions,
+  .join-brand-grid,
+  .global-footer {
+    contain-intrinsic-size: 1px 720px;
+  }
+
+  .archive-pin {
+    contain-intrinsic-size: 160px 230px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
