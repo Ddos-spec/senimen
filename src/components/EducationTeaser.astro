@@ -1,6 +1,7 @@
 ---
 import { articles } from '../data/articles';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 ---
 <section class="home-articles">
   <div class="articles-head">
@@ -11,14 +12,29 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
     <a class="action-link magnetic" href={`${base}articles/`}>LIHAT TULISAN ↗</a>
   </div>
   <div class="article-preview-grid">
-    {articles.slice(0, 3).map((article) => (
-      <a class="article-preview" href={`${base}articles/${article.slug}/`}>
-        <div class="article-preview-media"><img src={`${base}${article.cover}`} alt="" loading="lazy" decoding="async" /></div>
-        <span class="eyebrow">{article.eyebrow} · {article.readingTime}</span>
-        <h3>{article.title}</h3>
-        <p>{article.excerpt}</p>
-        <span class="read-more">BACA ↗</span>
-      </a>
-    ))}
+    {articles.slice(0, 3).map((article) => {
+      const cover = `${base}${article.cover}`;
+      return (
+        <a class="article-preview" href={`${base}articles/${article.slug}/`}>
+          <div class="article-preview-media">
+            <img
+              src={transparentPixel}
+              data-defer-src={cover}
+              alt=""
+              width="720"
+              height="480"
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+            />
+            <noscript><img src={cover} alt="" loading="lazy" decoding="async" /></noscript>
+          </div>
+          <span class="eyebrow">{article.eyebrow} · {article.readingTime}</span>
+          <h3>{article.title}</h3>
+          <p>{article.excerpt}</p>
+          <span class="read-more">BACA ↗</span>
+        </a>
+      );
+    })}
   </div>
 </section>
