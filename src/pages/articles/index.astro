@@ -3,14 +3,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { articles } from '../../data/articles';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
-<BaseLayout title="Artikel Edukasi — SENIMEN" description="Artikel edukasi SENIMEN tentang proses seni, dokumentasi, artist statement, kolaborasi, arsip, event, dan portofolio.">
+<BaseLayout title="Artikel — SENIMEN" description="Catatan SENIMEN soal dokumentasi, arsip, kolaborasi, event, artist statement, dan portofolio.">
   <main class="page articles-page">
     <section class="route-hero">
       <div class="route-hero-grid">
-        <div><span class="page-kicker">BACA / BELAJAR / BAGIKAN</span><h1 class="page-title">ARTIKEL<br />EDUKASI.</h1></div>
-        <p class="page-lead">Tulisan praktis untuk seniman dan pekerja kreatif. Bukan filler SEO: tiap artikel membahas satu masalah yang bisa dipakai dalam proses nyata.</p>
+        <div><span class="page-kicker">BACA / CATAT / PAKAI</span><h1 class="page-title">CATATAN<br />SENIMEN.</h1></div>
+        <p class="page-lead">Hal-hal yang biasanya baru kepikiran setelah kejadian: nyusun arsip, nulis statement, bikin brief, dokumentasi acara, sampai beresin portofolio.</p>
       </div>
-      <div class="route-count">{String(articles.length).padStart(2, '0')} ARTIKEL / SENIMEN EDITORIAL</div>
+      <div class="route-count">{String(articles.length).padStart(2, '0')} TULISAN</div>
     </section>
 
     <section class="articles-index">
