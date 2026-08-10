@@ -13,14 +13,17 @@ function initSenimen() {
   const progress = document.querySelector<HTMLElement>('.progress i');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const observers: IntersectionObserver[] = [];
+  const speedElements = [...document.querySelectorAll<HTMLElement>('[data-speed]')];
 
   const setMenu = (open: boolean) => {
     toggle?.setAttribute('aria-expanded', String(open));
     menu?.setAttribute('aria-hidden', String(!open));
+    if (menu) menu.inert = !open;
     menu?.classList.toggle('open', open);
     body.classList.toggle('menu-open', open);
   };
 
+  setMenu(false);
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'), { signal });
   document.querySelectorAll<HTMLElement>('[data-menu-link]').forEach((link) => {
     link.addEventListener('click', () => setMenu(false), { signal });
@@ -28,6 +31,36 @@ function initSenimen() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') setMenu(false);
   }, { signal });
+
+  const deferredImages = [...document.querySelectorAll<HTMLImageElement>('img[data-defer-src]')];
+  const hydrateDeferredImage = (img: HTMLImageElement) => {
+    const src = img.dataset.deferSrc;
+    if (!src) return;
+    const srcset = img.dataset.deferSrcset;
+    const sizes = img.dataset.deferSizes;
+    if (srcset) img.srcset = srcset;
+    if (sizes) img.sizes = sizes;
+    img.src = src;
+    delete img.dataset.deferSrc;
+    delete img.dataset.deferSrcset;
+    delete img.dataset.deferSizes;
+  };
+
+  if (deferredImages.length) {
+    if ('IntersectionObserver' in window) {
+      const deferredObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || !(entry.target instanceof HTMLImageElement)) return;
+          hydrateDeferredImage(entry.target);
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: '280px 0px', threshold: 0.01 });
+      observers.push(deferredObserver);
+      deferredImages.forEach((img) => deferredObserver.observe(img));
+    } else {
+      deferredImages.forEach(hydrateDeferredImage);
+    }
+  }
 
   let cursorFrame = 0;
   if (!reducedMotion && cursor && window.matchMedia('(pointer:fine)').matches) {
@@ -93,7 +126,7 @@ function initSenimen() {
     }
 
     if (!reducedMotion) {
-      document.querySelectorAll<HTMLElement>('[data-speed]').forEach((element) => {
+      speedElements.forEach((element) => {
         const speed = Number(element.dataset.speed || 0);
         const rect = element.getBoundingClientRect();
         const offset = (rect.top - innerHeight / 2) * speed;
@@ -138,7 +171,7 @@ function initSenimen() {
       media.muted = true;
       media.loop = true;
       media.playsInline = true;
-      media.preload = slot.dataset.priority === 'true' ? 'auto' : 'metadata';
+      media.preload = slot.dataset.priority === 'true' ? 'metadata' : 'none';
       media.setAttribute('aria-label', slot.dataset.alt || 'Video dokumentasi Senimen');
       media.addEventListener('loadeddata', () => finishMediaLoad(slot, media), { once: true });
       media.addEventListener('error', () => failMediaLoad(slot), { once: true });
@@ -166,7 +199,7 @@ function initSenimen() {
       mountMedia(entry.target as HTMLElement);
       observer.unobserve(entry.target);
     });
-  }, { rootMargin: '500px 0px', threshold: 0.01 });
+  }, { rootMargin: '280px 0px', threshold: 0.01 });
   observers.push(mediaObserver);
   mediaSlots.filter((slot) => slot.dataset.priority !== 'true').forEach((slot) => mediaObserver.observe(slot));
 
@@ -186,6 +219,10 @@ function initSenimen() {
     observers.forEach((observer) => observer.disconnect());
     if (cursorFrame) cancelAnimationFrame(cursorFrame);
     body.classList.remove('menu-open');
+    if (menu) {
+      menu.inert = true;
+      menu.setAttribute('aria-hidden', 'true');
+    }
   };
 }
 
