@@ -226,4 +226,8 @@ function initSenimen() {
   };
 }
 
-document.addEventListener('astro:page-load', initSenimen);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSenimen, { once: true });
+} else {
+  initSenimen();
+}
