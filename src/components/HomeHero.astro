@@ -1,7 +1,9 @@
 ---
 import GraffitiWord from './GraffitiWord.astro';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcunfsd18qPn_S&sz=w1000';
+const heroThumb = (width: number) => `https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcunfsd18qPn_S&sz=w${width}`;
+const heroImage = heroThumb(640);
+const heroSrcset = `${heroThumb(420)} 420w, ${heroThumb(560)} 560w, ${heroThumb(640)} 640w, ${heroThumb(800)} 800w`;
 ---
 
 <section class="hero-classic" aria-labelledby="senimen-home-title">
@@ -18,7 +20,17 @@ const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcun
     </h1>
 
     <div class="hero-classic-poster reveal-card">
-      <img src={heroImage} alt="Dokumentasi SENIMEN" loading="eager" decoding="async" fetchpriority="high" />
+      <img
+        src={heroImage}
+        srcset={heroSrcset}
+        sizes="(max-width: 760px) 88vw, (max-width: 1100px) 36vw, 465px"
+        alt="Dokumentasi SENIMEN"
+        width="640"
+        height="853"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
       <div class="hero-poster-label"><span>ARSIP / SENIMEN</span><span>TANGERANG</span></div>
     </div>
 
