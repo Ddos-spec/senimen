@@ -1,7 +1,7 @@
 ---
 import GraffitiWord from './GraffitiWord.astro';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcunfsd18qPn_S&sz=w1600';
+const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcunfsd18qPn_S&sz=w1000';
 ---
 
 <section class="hero-classic" aria-labelledby="senimen-home-title">
@@ -18,20 +18,20 @@ const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcun
     </h1>
 
     <div class="hero-classic-poster reveal-card">
-      <img src={heroImage} alt="Dokumentasi visual SENIMEN" loading="eager" decoding="async" fetchpriority="high" />
-      <div class="hero-poster-label"><span>SENIMEN / ARCHIVE</span><span>TANGERANG</span></div>
+      <img src={heroImage} alt="Dokumentasi SENIMEN" loading="eager" decoding="async" fetchpriority="high" />
+      <div class="hero-poster-label"><span>ARSIP / SENIMEN</span><span>TANGERANG</span></div>
     </div>
 
     <div class="hero-classic-stamp" aria-hidden="true">
-      <span>KOLAB</span><span>TUMBUH</span><span>BARENG</span>
+      <span>BIKIN</span><span>KETEMU</span><span>BARANG</span>
     </div>
   </div>
 
   <div class="hero-classic-bottom">
-    <p>Wadah untuk para seniman. Dokumentasi proses, perspektif, ekspresi, dan kolaborasi—dibangun sebagai ruang untuk bertemu, berkarya, dan tumbuh bareng.</p>
+    <p>Tempat seniman ketemu, bikin sesuatu, dan nyimpen jejaknya. Yang rapi masuk. Yang berantakan tapi penting juga masuk.</p>
     <div class="hero-classic-actions">
-      <a class="hero-round-link magnetic" href={`${base}archive/`} aria-label="Masuk ke arsip SENIMEN"><span>MASUK</span><b>↓</b></a>
-      <a class="hero-text-link" href={`${base}articles/`}>BACA ARTIKEL ↗</a>
+      <a class="hero-round-link magnetic" href={`${base}archive/`} aria-label="Masuk ke arsip SENIMEN"><span>ARSIP</span><b>↓</b></a>
+      <a class="hero-text-link" href={`${base}articles/`}>BACA ↗</a>
     </div>
   </div>
 </section>
@@ -153,20 +153,20 @@ const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcun
   }
 
   @media (max-width:760px) {
-    .hero-classic { min-height:auto; padding:26px 18px 48px; gap:28px; }
+    .hero-classic { min-height:auto; padding:24px 18px 44px; gap:24px; }
     .hero-classic-meta { font-size:8px; line-height:1.35; }
     .hero-classic-meta span:last-child { text-align:right; }
     .hero-classic-stage {
       min-height:0;
       display:grid;
       grid-template-rows:auto auto auto;
-      gap:18px;
+      gap:14px;
       place-items:stretch;
     }
     .hero-classic-title {
       position:relative;
       inset:auto;
-      min-height:250px;
+      min-height:238px;
       z-index:5;
     }
     .graffiti-lockup--seni {
@@ -183,27 +183,27 @@ const heroImage = 'https://drive.google.com/thumbnail?id=1_IjAQmZm15H76AhCTxqcun
     }
     .hero-classic-poster {
       grid-row:2;
-      width:min(82vw,430px);
+      width:min(80vw,410px);
       min-width:0;
       justify-self:center;
-      margin-top:-18px;
+      margin-top:-14px;
       transform:rotate(-1.5deg);
     }
-    .hero-classic-stamp { top:37%; right:2px; width:72px; height:72px; font-size:7px; }
-    .hero-classic-bottom { grid-template-columns:1fr; gap:28px; padding-top:4px; }
-    .hero-classic-bottom p { max-width:92%; font-size:18px; line-height:1.42; }
+    .hero-classic-stamp { top:36%; right:2px; width:70px; height:70px; font-size:7px; }
+    .hero-classic-bottom { grid-template-columns:1fr; gap:24px; padding-top:4px; }
+    .hero-classic-bottom p { max-width:31ch; font-size:18px; line-height:1.42; }
     .hero-classic-actions { width:100%; justify-content:space-between; align-items:center; }
-    .hero-round-link { width:82px; height:82px; }
+    .hero-round-link { width:80px; height:80px; }
   }
 
   @media (max-width:420px) {
     .hero-classic { padding-inline:15px; }
-    .hero-classic-meta span:first-child { max-width:190px; }
-    .hero-classic-title { min-height:220px; }
+    .hero-classic-meta span:first-child { max-width:170px; }
+    .hero-classic-title { min-height:210px; }
     .graffiti-lockup--seni { width:94%; left:-4%; }
     .graffiti-lockup--men { width:76%; right:-2%; }
-    .hero-classic-poster { width:88vw; margin-top:-10px; }
-    .hero-classic-stamp { top:36%; right:0; }
+    .hero-classic-poster { width:88vw; margin-top:-8px; }
+    .hero-classic-stamp { top:35%; right:0; }
     .hero-classic-bottom p { max-width:100%; font-size:17px; }
   }
 </style>
