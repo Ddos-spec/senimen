@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { brand } from '../data/brand';
@@ -50,6 +49,11 @@ const schema = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f70bbd" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https://drive.google.com https://*.googleusercontent.com; media-src 'self' blob: https://drive.google.com https://drive.usercontent.google.com https://*.googleusercontent.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+    />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <meta property="og:title" content={title} />
@@ -62,16 +66,15 @@ const schema = {
     <meta name="twitter:image" content={socialImage} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/png" href={brand.favicon} />
-    <link rel="apple-touch-icon" href={brand.og} />
-    <link rel="preconnect" href="https://drive.google.com" />
+    <link rel="apple-touch-icon" href={brand.logo} />
+    <link rel="preconnect" href="https://drive.google.com" crossorigin />
     <link rel="dns-prefetch" href="https://drive.google.com" />
-    <link rel="preconnect" href="https://drive.usercontent.google.com" />
+    <link rel="preconnect" href="https://drive.usercontent.google.com" crossorigin />
     <link rel="dns-prefetch" href="https://drive.usercontent.google.com" />
-    <link rel="preconnect" href="https://lh3.googleusercontent.com" />
+    <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin />
     <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
     <title>{title}</title>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
-    <ClientRouter fallback="animate" />
   </head>
   <body>
     <div class="noise" aria-hidden="true"></div>
