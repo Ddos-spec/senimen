@@ -1,13 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { social } from '../data/site';
+import { brand } from '../data/brand';
 ---
-<BaseLayout title="Gabung & Kolaborasi — SENIMEN" description="Gabung, kirim karya, hubungi admin, atau buka kolaborasi dengan SENIMEN.">
+<BaseLayout title="Gabung & Kolaborasi — SENIMEN" description="Gabung, kirim karya, hubungi admin, atau buka kolaborasi dengan SENIMEN." image={brand.collab}>
   <main class="page join-page">
-    <section class="route-hero">
-      <div class="route-hero-grid">
+    <section class="route-hero join-hero">
+      <div class="route-hero-grid join-hero-grid">
         <div><span class="page-kicker">BERGABUNG / KOLABORASI</span><h1 class="page-title">TUMBUH<br />BARENG.</h1></div>
-        <p class="page-lead">Tidak perlu alur onboarding yang dibuat rumit. Pilih jalur yang sesuai: lihat komunitasnya, kirim karya ke arsip, atau langsung buka percakapan.</p>
+        <figure class="join-brand-hero">
+          <img src={brand.collab} alt="Kolaborasi SENIMEN" width="1000" height="1000" fetchpriority="high" decoding="async" />
+        </figure>
       </div>
     </section>
 
@@ -20,5 +23,68 @@ import { social } from '../data/site';
         <a class="join-link" href={`mailto:${social.email}`}><span>EMAIL / {social.email}</span><span>↗</span></a>
       </div>
     </section>
+
+    <section class="join-brand-grid" aria-label="Aset resmi SENIMEN">
+      <figure class="join-brand-card">
+        <img src={brand.joinQr} alt="QR untuk bergabung dengan SENIMEN" loading="lazy" decoding="async" />
+        <figcaption>JOIN SENIMEN</figcaption>
+      </figure>
+      <a class="join-brand-card" href={social.submit} target="_blank" rel="noreferrer">
+        <img src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" loading="lazy" decoding="async" />
+        <span class="join-brand-caption">KIRIM KARYA ↗</span>
+      </a>
+    </section>
   </main>
 </BaseLayout>
+
+<style>
+  .join-hero-grid { align-items: center; }
+  .join-brand-hero {
+    margin: 0;
+    justify-self: end;
+    width: min(34vw, 430px);
+    border: 1px solid var(--senimen-black);
+    transform: rotate(1.2deg);
+    overflow: hidden;
+  }
+  .join-brand-hero img { width: 100%; height: auto; display: block; }
+
+  .join-brand-grid {
+    padding: 0 var(--page-pad) clamp(90px, 11vw, 150px);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 1200px;
+  }
+  .join-brand-card {
+    margin: 0;
+    display: block;
+    border: 1px solid var(--senimen-black);
+    background: var(--senimen-black);
+    color: var(--senimen-white);
+    overflow: hidden;
+  }
+  .join-brand-card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+  }
+  .join-brand-card figcaption,
+  .join-brand-caption {
+    display: flex;
+    min-height: 52px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-top: 1px solid #333;
+    font: 500 9px/1 var(--mono);
+    letter-spacing: .06em;
+  }
+  @media (max-width: 760px) {
+    .join-hero-grid { gap: 34px; }
+    .join-brand-hero { width: min(78vw, 380px); justify-self: start; }
+    .join-brand-grid { grid-template-columns: 1fr; padding-inline: 18px; gap: 12px; }
+  }
+</style>
