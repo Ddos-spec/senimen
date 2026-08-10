@@ -1,0 +1,110 @@
+@media (max-width: 760px) {
+  html,
+  body { max-width: 100%; overflow-x: clip; }
+
+  img,
+  video,
+  audio,
+  iframe { max-width: 100%; }
+
+  .route-hero { overflow: hidden; }
+  .route-hero-grid > * { min-width: 0; }
+
+  .page-title,
+  .article-row h2,
+  .about-statement h2,
+  .join-actions h2,
+  .featured-head h2,
+  .articles-head h2 {
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .page-lead,
+  .about-copy,
+  .home-intro-copy,
+  .article-preview p {
+    overflow-wrap: break-word;
+  }
+
+  .archive-drive-hero .route-count {
+    margin-top: 20px;
+    max-width: 100%;
+    line-height: 1.5;
+  }
+
+  .archive-drive-masonry {
+    columns: 2 !important;
+    column-gap: 8px !important;
+    padding-inline: 10px !important;
+  }
+
+  .archive-pin { margin-bottom: 18px !important; }
+  .archive-pin-media { touch-action: manipulation; }
+  .archive-pin-meta { gap: 6px; }
+  .archive-pin-meta span:last-child { flex: 0 0 auto; }
+
+  .article-row {
+    grid-template-columns: 30px minmax(0, 1fr) 18px;
+    gap: 10px;
+  }
+  .article-row h2 { min-width: 0; }
+  .article-row-meta { line-height: 1.45; }
+
+  .join-brand-hero,
+  .join-brand-card { max-width: 100%; }
+
+  .global-footer > * { min-width: 0; }
+  .footer-contact a { overflow-wrap: anywhere; }
+
+  button,
+  a { touch-action: manipulation; }
+}
+
+@media (max-width: 420px) {
+  :root { --page-pad: 15px; }
+
+  .global-header { padding-inline: 15px; }
+  .route-hero { padding-inline: 15px; }
+  .home-intro,
+  .featured-strip,
+  .home-articles,
+  .about-body,
+  .articles-index,
+  .join-actions { padding-inline: 15px; }
+
+  .page-title { font-size: clamp(52px, 17vw, 78px); }
+  .page-lead { font-size: 17px; }
+
+  .archive-drive-masonry {
+    columns: 2 !important;
+    padding-inline: 8px !important;
+  }
+
+  .archive-pin-meta {
+    font-size: 6.5px !important;
+    line-height: 1.25;
+  }
+
+  .article-row h2 { font-size: clamp(27px, 8.7vw, 38px); }
+  .article-row-no,
+  .article-row-meta { font-size: 7px; }
+
+  .join-brand-grid { padding-inline: 15px !important; }
+}
+
+@media (max-width: 340px) {
+  .archive-drive-masonry { columns: 1 !important; padding-inline: 12px !important; }
+  .archive-pin-meta { font-size: 7px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
