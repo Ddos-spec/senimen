@@ -8,7 +8,7 @@ import { ticker } from '../data/site';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const marquee = [...ticker, 'DOKUMENTASI PROSES', 'PERSPEKTIF', 'EKSPRESI', ...ticker, 'DOKUMENTASI PROSES', 'PERSPEKTIF', 'EKSPRESI'];
 ---
-<BaseLayout image="images/carousel_all/slide_109.jpg">
+<BaseLayout>
   <main class="page">
     <HomeHero />
 
@@ -20,7 +20,7 @@ const marquee = [...ticker, 'DOKUMENTASI PROSES', 'PERSPEKTIF', 'EKSPRESI', ...t
       <div class="page-kicker">01 / SENIMEN?</div>
       <div>
         <h2>KARYA TIDAK HARUS MENUNGGU SELESAI UNTUK PUNYA CERITA.</h2>
-        <div class="home-intro-copy">SENIMEN menyimpan proses, pertemuan, percakapan, karya, event, dan eksperimen sebagai arsip yang bisa dibaca kembali. Bukan cuma feed sosial yang tenggelam setelah beberapa hari.</div>
+        <div class="home-intro-copy">SENIMEN menyimpan proses, pertemuan, percakapan, karya, event, dan eksperimen sebagai arsip yang bisa dibaca kembali.</div>
       </div>
     </section>
 
@@ -30,16 +30,9 @@ const marquee = [...ticker, 'DOKUMENTASI PROSES', 'PERSPEKTIF', 'EKSPRESI', ...t
 
     <EducationTeaser />
 
-    <section class="route-hero" style="background:#efefed">
-      <div class="route-hero-grid">
-        <div><span class="page-kicker">04 / MOVING IMAGE</span><h2 class="page-title">REELS<br />ARCHIVE.</h2></div>
-        <div><p class="page-lead">Video punya ruang sendiri. Halaman Reels otomatis membaca MP4 yang tersedia di folder media saat website dibangun.</p><div style="margin-top:28px"><a class="action-link magnetic" href={`${base}reels/`}>BUKA REELS ↗</a></div></div>
-      </div>
-    </section>
-
     <section class="route-hero" style="background:#f70bbd;border-bottom:0">
       <div class="route-hero-grid">
-        <div><span class="page-kicker">05 / BERGABUNG</span><h2 class="page-title">TUMBUH<br />BARENG.</h2></div>
+        <div><span class="page-kicker">04 / BERGABUNG</span><h2 class="page-title">TUMBUH<br />BARENG.</h2></div>
         <div><p class="page-lead">Kirim karya, buka percakapan, atau ajak SENIMEN berkolaborasi.</p><div style="margin-top:28px"><a class="action-link magnetic" href={`${base}join/`}>MASUK KE RUANGNYA ↗</a></div></div>
       </div>
     </section>
