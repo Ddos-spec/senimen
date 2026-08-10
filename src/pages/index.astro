@@ -6,34 +6,34 @@ import EducationTeaser from '../components/EducationTeaser.astro';
 import { ticker } from '../data/site';
 
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const marquee = [...ticker, 'DOKUMENTASI PROSES', 'PERSPEKTIF', 'EKSPRESI', ...ticker, 'DOKUMENTASI PROSES', 'PERSPEKTIF', 'EKSPRESI'];
+const marquee = [...ticker, 'SKETSA', 'OBROLAN', 'ACARA', ...ticker, 'PROSES', 'CATATAN', 'KARYA'];
 ---
 <BaseLayout>
   <main class="page">
     <HomeHero />
 
-    <section class="home-marquee" aria-label="Topik SENIMEN">
+    <section class="home-marquee" aria-label="Isi SENIMEN">
       <div class="home-marquee-track">{marquee.map((item) => <><span>{item}</span><span>✦</span></>)}</div>
     </section>
 
     <section class="home-intro">
       <div class="page-kicker">01 / SENIMEN?</div>
       <div>
-        <h2>KARYA TIDAK HARUS MENUNGGU SELESAI UNTUK PUNYA CERITA.</h2>
-        <div class="home-intro-copy">SENIMEN menyimpan proses, pertemuan, percakapan, karya, event, dan eksperimen sebagai arsip yang bisa dibaca kembali.</div>
+        <h2>YANG SERING HILANG JUSTRU BAGIAN SEBELUM KARYA JADI.</h2>
+        <div class="home-intro-copy">Sketsa, obrolan, trial gagal, foto acara, potongan video, sampai catatan yang nyaris kebuang. Kalau masih punya cerita, simpan di sini.</div>
       </div>
     </section>
 
     <FeaturedArchive />
 
-    <section class="pink-manifesto"><p>KOLABORASI.<br />KONTRIBUSI.<br /><em>EKSPRESI.</em></p></section>
+    <section class="pink-manifesto"><p>BIKIN.<br />KETEMU.<br /><em>SIMPAN JEJAK.</em></p></section>
 
     <EducationTeaser />
 
     <section class="route-hero" style="background:#f70bbd;border-bottom:0">
       <div class="route-hero-grid">
-        <div><span class="page-kicker">04 / BERGABUNG</span><h2 class="page-title">TUMBUH<br />BARENG.</h2></div>
-        <div><p class="page-lead">Kirim karya, buka percakapan, atau ajak SENIMEN berkolaborasi.</p><div style="margin-top:28px"><a class="action-link magnetic" href={`${base}join/`}>MASUK KE RUANGNYA ↗</a></div></div>
+        <div><span class="page-kicker">04 / GABUNG</span><h2 class="page-title">BAWA<br />SESUATU.</h2></div>
+        <div><p class="page-lead">Punya karya, acara, arsip, atau ide yang pengin dikerjain bareng? Masuk aja.</p><div style="margin-top:28px"><a class="action-link magnetic" href={`${base}join/`}>GABUNG ↗</a></div></div>
       </div>
     </section>
   </main>
