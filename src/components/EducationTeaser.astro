@@ -8,10 +8,10 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
 <section class="home-articles">
   <div class="articles-head">
     <div>
-      <div class="page-kicker">03 / CATATAN</div>
-      <h2>YANG BISA<br />DIPAKAI.</h2>
+      <div class="page-kicker">03 / ARTIKEL</div>
+      <h2>CATATAN<br />SENIMEN.</h2>
     </div>
-    <a class="action-link magnetic" href={`${base}articles/`}>LIHAT TULISAN ↗</a>
+    <a class="action-link magnetic" href={`${base}articles/`}>SEMUA ARTIKEL ↗</a>
   </div>
   <div class="article-preview-grid">
     {articles.slice(0, 3).map((article) => {
@@ -34,7 +34,7 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
           <span class="eyebrow">{article.eyebrow} · {article.readingTime}</span>
           <h3>{article.title}</h3>
           <p>{article.excerpt}</p>
-          <span class="read-more">BACA ↗</span>
+          <span class="read-more">BACA ARTIKEL ↗</span>
         </a>
       );
     })}
