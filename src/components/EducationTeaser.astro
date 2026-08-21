@@ -1,15 +1,9 @@
 ---
 import { articles } from '../data/articles';
+import { articleCovers } from '../data/articleCovers';
+
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-const generatedCovers: Record<string, string> = {
-  'dokumentasi-proses-seni': 'images/articles/dokumentasi-proses-seni.webp',
-  'artist-statement-tanpa-basa-basi': 'images/articles/artist-statement.webp',
-  'brief-kolaborasi-kreatif': 'images/articles/brief-kolaborasi-kreatif.webp',
-  'membangun-arsip-kolektif': 'images/articles/arsip-kolektif.webp',
-  'mendokumentasikan-event-seni': 'images/articles/dokumentasi-event-seni.webp',
-  'portofolio-seniman-sebagai-cerita': 'images/articles/portofolio-seniman.webp',
-};
 ---
 <section class="home-articles">
   <div class="articles-head">
@@ -21,24 +15,21 @@ const generatedCovers: Record<string, string> = {
   </div>
   <div class="article-preview-grid">
     {articles.slice(0, 3).map((article) => {
-      const cover = `${base}${generatedCovers[article.slug] ?? article.cover}`;
-      const fallback = `${base}${article.cover}`;
+      const cover = articleCovers[article.slug] ?? `${base}${article.cover}`;
       return (
         <a class="article-preview" href={`${base}articles/${article.slug}/`}>
-          <div class="article-preview-media">
+          <div class="article-preview-media article-preview-media--full">
             <img
               src={transparentPixel}
               data-defer-src={cover}
-              data-fallback={fallback}
-              onerror="this.onerror=null;this.src=this.dataset.fallback"
               alt=""
-              width="1200"
-              height="900"
+              width="1448"
+              height="1086"
               loading="lazy"
               decoding="async"
               fetchpriority="low"
             />
-            <noscript><img src={fallback} alt="" loading="lazy" decoding="async" /></noscript>
+            <noscript><img src={cover} alt="" loading="lazy" decoding="async" /></noscript>
           </div>
           <span class="eyebrow">{article.eyebrow} · {article.readingTime}</span>
           <h3>{article.title}</h3>
@@ -49,3 +40,18 @@ const generatedCovers: Record<string, string> = {
     })}
   </div>
 </section>
+
+<style>
+  .article-preview-media--full {
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    background: #111;
+  }
+  .article-preview-media--full img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+</style>
