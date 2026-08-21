@@ -2,6 +2,14 @@
 import { articles } from '../data/articles';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+const generatedCovers: Record<string, string> = {
+  'dokumentasi-proses-seni': 'images/articles/dokumentasi-proses-seni.png',
+  'artist-statement-tanpa-basa-basi': 'images/articles/artist-statement.png',
+  'brief-kolaborasi-kreatif': 'images/articles/brief-kolaborasi-kreatif.png',
+  'membangun-arsip-kolektif': 'images/articles/arsip-kolektif.png',
+  'mendokumentasikan-event-seni': 'images/articles/dokumentasi-event-seni.png',
+  'portofolio-seniman-sebagai-cerita': 'images/articles/portofolio-seniman.png',
+};
 ---
 <section class="home-articles">
   <div class="articles-head">
@@ -13,13 +21,16 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
   </div>
   <div class="article-preview-grid">
     {articles.slice(0, 3).map((article) => {
-      const cover = `${base}${article.cover}`;
+      const cover = `${base}${generatedCovers[article.slug] ?? article.cover}`;
+      const fallback = `${base}${article.cover}`;
       return (
         <a class="article-preview" href={`${base}articles/${article.slug}/`}>
           <div class="article-preview-media">
             <img
               src={transparentPixel}
               data-defer-src={cover}
+              data-fallback={fallback}
+              onerror="this.onerror=null;this.src=this.dataset.fallback"
               alt=""
               width="720"
               height="480"
@@ -27,7 +38,7 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
               decoding="async"
               fetchpriority="low"
             />
-            <noscript><img src={cover} alt="" loading="lazy" decoding="async" /></noscript>
+            <noscript><img src={fallback} alt="" loading="lazy" decoding="async" /></noscript>
           </div>
           <span class="eyebrow">{article.eyebrow} · {article.readingTime}</span>
           <h3>{article.title}</h3>
