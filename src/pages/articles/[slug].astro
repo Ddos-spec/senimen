@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { articles, type Article } from '../../data/articles';
+import { articleCovers } from '../../data/articleCovers';
 
 export function getStaticPaths() {
   return articles.map((article) => ({ params: { slug: article.slug }, props: { article } }));
@@ -9,16 +10,7 @@ export function getStaticPaths() {
 interface Props { article: Article }
 const { article } = Astro.props;
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const generatedCovers: Record<string, string> = {
-  'dokumentasi-proses-seni': 'images/articles/dokumentasi-proses-seni.webp',
-  'artist-statement-tanpa-basa-basi': 'images/articles/artist-statement.webp',
-  'brief-kolaborasi-kreatif': 'images/articles/brief-kolaborasi-kreatif.webp',
-  'membangun-arsip-kolektif': 'images/articles/arsip-kolektif.webp',
-  'mendokumentasikan-event-seni': 'images/articles/dokumentasi-event-seni.webp',
-  'portofolio-seniman-sebagai-cerita': 'images/articles/portofolio-seniman.webp',
-};
-const articleCover = `${base}${generatedCovers[article.slug] ?? article.cover}`;
-const articleFallback = `${base}${article.cover}`;
+const articleCover = articleCovers[article.slug] ?? `${base}${article.cover}`;
 ---
 <BaseLayout title={`${article.title} — SENIMEN`} description={article.excerpt} image={articleCover}>
   <main class="page article-page">
@@ -29,15 +21,15 @@ const articleFallback = `${base}${article.cover}`;
         <p class="article-deck">{article.excerpt}</p>
       </header>
 
-      <div class="article-cover">
+      <div class="article-cover article-cover--full">
         <img
           src={articleCover}
-          data-fallback={articleFallback}
           alt={article.title}
+          width="1448"
+          height="1086"
           loading="eager"
           decoding="async"
           fetchpriority="high"
-          onerror="this.onerror=null;this.src=this.dataset.fallback"
         />
       </div>
 
@@ -55,3 +47,20 @@ const articleFallback = `${base}${article.cover}`;
     </article>
   </main>
 </BaseLayout>
+
+<style>
+  .article-cover--full {
+    height: auto !important;
+    aspect-ratio: auto !important;
+    overflow: visible !important;
+    background: #111;
+  }
+  .article-cover--full img {
+    width: 100%;
+    height: auto !important;
+    max-height: none !important;
+    display: block;
+    object-fit: contain !important;
+    object-position: center;
+  }
+</style>
