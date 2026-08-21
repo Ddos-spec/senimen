@@ -4,11 +4,15 @@ import { social } from '../data/site';
 import { brand } from '../data/brand';
 const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 ---
-<BaseLayout title="Gabung — SENIMEN" description="Kirim karya, ngobrol, atau bikin sesuatu bareng SENIMEN." image={brand.collab}>
+<BaseLayout title="Gabung — SENIMEN" description="Kirim karya, ngobrol, atau ngajak bikin sesuatu bareng SENIMEN." image={brand.collab}>
   <main class="page join-page">
     <section class="route-hero join-hero">
       <div class="route-hero-grid join-hero-grid">
-        <div><span class="page-kicker">GABUNG / SENIMEN</span><h1 class="page-title">BAWA<br />SESUATU.</h1></div>
+        <div>
+          <span class="page-kicker">GABUNG / SENIMEN</span>
+          <h1 class="page-title">BAWA<br />SESUATU.</h1>
+          <p class="page-lead join-lead">Nggak harus datang bawa proposal rapi. Bisa karya, dokumentasi, ide acara, ajakan kolaborasi, atau sekadar pengin kenalan dulu.</p>
+        </div>
         <figure class="join-brand-hero">
           <img src={brand.collab} alt="Kolaborasi SENIMEN" width="720" height="720" loading="eager" fetchpriority="high" decoding="async" />
         </figure>
@@ -16,10 +20,10 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
     </section>
 
     <section class="join-actions">
-      <div><span class="page-kicker">PILIH AJA</span><h2>MAU MASUK<br />LEWAT MANA?</h2></div>
+      <div><span class="page-kicker">MULAI DARI SINI</span><h2>MAU MASUK<br />LEWAT MANA?</h2></div>
       <div class="join-links">
         <a class="join-link" href={social.instagram} target="_blank" rel="noreferrer"><span>LIHAT INSTAGRAM</span><span>↗</span></a>
-        <a class="join-link" href={social.submit} target="_blank" rel="noreferrer"><span>KIRIM KARYA</span><span>↗</span></a>
+        <a class="join-link" href={social.submit} target="_blank" rel="noreferrer"><span>KIRIM KARYA / ARSIP</span><span>↗</span></a>
         <a class="join-link" href={social.whatsapp} target="_blank" rel="noreferrer"><span>NGOBROL VIA WHATSAPP</span><span>↗</span></a>
         <a class="join-link" href={`mailto:${social.email}`}><span>KIRIM EMAIL</span><span>↗</span></a>
       </div>
@@ -34,7 +38,7 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
       <a class="join-brand-card" href={social.submit} target="_blank" rel="noreferrer">
         <img src={transparentPixel} data-defer-src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" width="520" height="520" loading="lazy" decoding="async" fetchpriority="low" />
         <noscript><img src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" loading="lazy" decoding="async" /></noscript>
-        <span class="join-brand-caption">KIRIM KARYA ↗</span>
+        <span class="join-brand-caption">KIRIM KARYA / ARSIP ↗</span>
       </a>
     </section>
   </main>
@@ -42,6 +46,7 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
 
 <style>
   .join-hero-grid { align-items: center; }
+  .join-lead { margin-top: 34px; max-width: 28ch; }
   .join-brand-hero {
     margin: 0;
     justify-self: end;
@@ -87,6 +92,7 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
   }
   @media (max-width: 760px) {
     .join-hero-grid { gap: 34px; }
+    .join-lead { margin-top: 24px; max-width: 34ch; }
     .join-brand-hero { width: min(78vw, 380px); justify-self: start; }
     .join-brand-grid { grid-template-columns: 1fr; padding-inline: 18px; gap: 12px; }
   }
