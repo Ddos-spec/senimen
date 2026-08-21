@@ -1,14 +1,25 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { articles } from '../../data/articles';
+
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const generatedCovers: Record<string, string> = {
+  'dokumentasi-proses-seni': 'images/articles/dokumentasi-proses-seni.png',
+  'artist-statement-tanpa-basa-basi': 'images/articles/artist-statement.png',
+  'brief-kolaborasi-kreatif': 'images/articles/brief-kolaborasi-kreatif.png',
+  'membangun-arsip-kolektif': 'images/articles/arsip-kolektif.png',
+  'mendokumentasikan-event-seni': 'images/articles/dokumentasi-event-seni.png',
+  'portofolio-seniman-sebagai-cerita': 'images/articles/portofolio-seniman.png',
+};
+const coverFor = (article: (typeof articles)[number]) => `${base}${generatedCovers[article.slug] ?? article.cover}`;
+const fallbackFor = (article: (typeof articles)[number]) => `${base}${article.cover}`;
 ---
-<BaseLayout title="Artikel — SENIMEN" description="Catatan SENIMEN soal dokumentasi, arsip, kolaborasi, event, artist statement, dan portofolio.">
+<BaseLayout title="Artikel — SENIMEN" description="Catatan SENIMEN soal proses, arsip, kolaborasi, dokumentasi, dan cara ngomongin karya tanpa kebanyakan basa-basi.">
   <main class="page articles-page">
     <section class="route-hero">
       <div class="route-hero-grid">
         <div><span class="page-kicker">BACA / CATAT / PAKAI</span><h1 class="page-title">CATATAN<br />SENIMEN.</h1></div>
-        <p class="page-lead">Hal-hal yang biasanya baru kepikiran setelah kejadian: nyusun arsip, nulis statement, bikin brief, dokumentasi acara, sampai beresin portofolio.</p>
+        <p class="page-lead">Catatan yang biasanya baru dicari pas sudah telat: cara nyimpen proses, nulis soal karya, bikin brief, dokumentasi acara, sampai milih isi portofolio.</p>
       </div>
       <div class="route-count">{String(articles.length).padStart(2, '0')} TULISAN</div>
     </section>
@@ -18,13 +29,99 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
         {articles.map((article, index) => (
           <a class="article-row" href={`${base}articles/${article.slug}/`}>
             <span class="article-row-no">{String(index + 1).padStart(2, '0')}</span>
-            <h2>{article.title}</h2>
-            <p>{article.excerpt}</p>
-            <span class="article-arrow">↗</span>
-            <span class="article-row-meta">{article.eyebrow} · {article.readingTime}</span>
+            <div class="article-row-media">
+              <img
+                src={coverFor(article)}
+                data-fallback={fallbackFor(article)}
+                alt={`Cover ${article.title}`}
+                width="960"
+                height="720"
+                loading={index < 2 ? 'eager' : 'lazy'}
+                decoding="async"
+                fetchpriority={index === 0 ? 'high' : 'low'}
+                onerror="this.onerror=null;this.src=this.dataset.fallback"
+              />
+            </div>
+            <div class="article-row-copy">
+              <span class="article-row-meta">{article.eyebrow} · {article.readingTime}</span>
+              <h2>{article.title}</h2>
+              <p>{article.excerpt}</p>
+            </div>
+            <span class="article-arrow" aria-hidden="true">↗</span>
           </a>
         ))}
       </div>
     </section>
   </main>
 </BaseLayout>
+
+<style>
+  .articles-index { padding-top: 0; }
+  .article-row {
+    grid-template-columns: 46px minmax(300px, .9fr) minmax(0, 1fr) 26px;
+    gap: clamp(16px, 2vw, 30px);
+    min-height: 0;
+    padding: 16px 0;
+    align-items: stretch;
+  }
+  .article-row:hover { padding-inline: 0; background: transparent; }
+  .article-row-no { padding-top: 7px; align-self: start; }
+  .article-row-media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #d9d9d6;
+  }
+  .article-row-media img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.04);
+    transition: transform .45s ease, filter .3s ease;
+  }
+  .article-row:hover .article-row-media img { transform: scale(1.025); filter: grayscale(1) contrast(1.1); }
+  .article-row-copy {
+    min-width: 0;
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .article-row-meta { margin-bottom: clamp(12px, 1.4vw, 20px); }
+  .article-row h2 {
+    margin: 0;
+    max-width: 16ch;
+    font-size: clamp(29px, 3.25vw, 54px);
+    line-height: .95;
+    letter-spacing: -.06em;
+  }
+  .article-row p {
+    margin: clamp(18px, 2vw, 28px) 0 0;
+    max-width: 52ch;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .article-arrow { align-self: center; justify-self: end; }
+
+  @media (max-width: 900px) {
+    .article-row { grid-template-columns: 36px minmax(220px, .8fr) minmax(0, 1fr) 22px; gap: 16px; }
+    .article-row h2 { font-size: clamp(27px, 4vw, 40px); }
+    .article-row p { font-size: 13px; }
+  }
+
+  @media (max-width: 700px) {
+    .articles-index { padding-inline: 18px; padding-bottom: 84px; }
+    .article-row {
+      grid-template-columns: 28px minmax(0, 1fr) 20px;
+      gap: 12px;
+      padding: 18px 0 26px;
+    }
+    .article-row-no { grid-column: 1; grid-row: 1 / 3; padding-top: 3px; }
+    .article-row-media { grid-column: 2 / 4; grid-row: 1; }
+    .article-row-copy { grid-column: 2; grid-row: 2; padding-top: 6px; }
+    .article-arrow { grid-column: 3; grid-row: 2; align-self: start; padding-top: 8px; }
+    .article-row h2 { max-width: none; font-size: clamp(27px, 8vw, 38px); }
+    .article-row p { margin-top: 14px; max-width: 44ch; }
+    .article-row-meta { margin-bottom: 11px; }
+  }
+</style>
