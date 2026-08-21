@@ -12,10 +12,10 @@ export const visualNotes = [23, 24, 50, 109, 112, 113].map((slide, index) => ({
 }));
 
 export const spaces = [
-  { no: '01', name: 'ARSIP', description: 'Submit karya dan masuk ke arsip kolektif', href: 'https://forms.gle/MN6SPw3rrdYswiXL6', external: true },
-  { no: '02', name: 'KARYA', description: 'Visual, objek, performance, eksperimen', href: '#visual-notes' },
-  { no: '03', name: 'EVENT', description: 'Agenda, dokumentasi, recap, pertemuan', href: '#archive' },
-  { no: '04', name: 'KOLAB', description: 'Proyek bersama, partner, ruang kolaborasi', href: 'mailto:senimenuntukseni@gmail.com' },
+  { no: '01', name: 'ARSIP', description: 'Kirim karya atau dokumentasi untuk arsip kolektif', href: 'https://forms.gle/MN6SPw3rrdYswiXL6', external: true },
+  { no: '02', name: 'KARYA', description: 'Visual, objek, performance, dan eksperimen', href: '#visual-notes' },
+  { no: '03', name: 'EVENT', description: 'Agenda, dokumentasi, recap, dan pertemuan', href: '#archive' },
+  { no: '04', name: 'KOLAB', description: 'Proyek bersama dengan seniman, ruang, atau komunitas', href: 'mailto:senimenuntukseni@gmail.com' },
 ] as const;
 
 export const ticker = ['PESTA BABI', 'NONGKI ONLEN', 'RRI PRO 4', 'JAGATRASA EVENT', 'SENIMEN?'] as const;
