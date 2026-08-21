@@ -6,14 +6,14 @@ import { articleCovers } from '../../data/articleCovers';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const coverFor = (article: (typeof articles)[number]) => articleCovers[article.slug] ?? `${base}${article.cover}`;
 ---
-<BaseLayout title="Artikel — SENIMEN" description="Catatan SENIMEN soal proses, arsip, kolaborasi, dokumentasi, dan cara ngomongin karya tanpa kebanyakan basa-basi.">
+<BaseLayout title="Artikel — SENIMEN" description="Artikel SENIMEN tentang dokumentasi proses, artist statement, brief kolaborasi, arsip kolektif, dokumentasi event, dan portofolio.">
   <main class="page articles-page">
     <section class="route-hero">
       <div class="route-hero-grid">
-        <div><span class="page-kicker">BACA / CATAT / PAKAI</span><h1 class="page-title">CATATAN<br />SENIMEN.</h1></div>
-        <p class="page-lead">Catatan yang biasanya baru dicari pas sudah telat: cara nyimpen proses, nulis soal karya, bikin brief, dokumentasi acara, sampai milih isi portofolio.</p>
+        <div><span class="page-kicker">ARTIKEL / SENIMEN</span><h1 class="page-title">ARTIKEL<br />SENIMEN.</h1></div>
+        <p class="page-lead">Enam catatan praktis tentang dokumentasi proses, artist statement, brief kolaborasi, arsip kolektif, dokumentasi event, dan portofolio.</p>
       </div>
-      <div class="route-count">{String(articles.length).padStart(2, '0')} TULISAN</div>
+      <div class="route-count">{String(articles.length).padStart(2, '0')} ARTIKEL</div>
     </section>
 
     <section class="articles-index">
