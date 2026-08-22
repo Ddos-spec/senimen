@@ -13,19 +13,21 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
           <h1 class="page-title">GABUNG<br />SENIMEN.</h1>
           <p class="page-lead join-lead">Mau kirim karya, masukin dokumentasi ke arsip, ngajak bikin acara, atau bahas kolaborasi? Pilih kontak yang paling sesuai di bawah.</p>
         </div>
-        <figure class="join-brand-hero">
+        <figure class="join-brand-hero reveal-card">
           <img src={brand.collab} alt="Kolaborasi SENIMEN" width="720" height="720" loading="eager" fetchpriority="high" decoding="async" />
         </figure>
       </div>
+      <img class="join-scrap join-scrap--one" src={brand.tanyaTanya} alt="" aria-hidden="true" width="480" height="480" loading="lazy" decoding="async" />
+      <img class="join-scrap join-scrap--two" src={brand.balikLayar} alt="" aria-hidden="true" width="480" height="480" loading="lazy" decoding="async" />
     </section>
 
     <section class="join-actions">
       <div><span class="page-kicker">KONTAK & SUBMISI</span><h2>PILIH<br />JALURNYA.</h2></div>
       <div class="join-links">
-        <a class="join-link" href={social.instagram} target="_blank" rel="noreferrer"><span>INSTAGRAM</span><span>↗</span></a>
-        <a class="join-link" href={social.submit} target="_blank" rel="noreferrer"><span>KIRIM KARYA / ARSIP</span><span>↗</span></a>
-        <a class="join-link" href={social.whatsapp} target="_blank" rel="noreferrer"><span>WHATSAPP</span><span>↗</span></a>
-        <a class="join-link" href={`mailto:${social.email}`}><span>EMAIL</span><span>↗</span></a>
+        <a class="join-link" data-cursor="BUKA" href={social.instagram} target="_blank" rel="noreferrer"><span>INSTAGRAM</span><span>↗</span></a>
+        <a class="join-link" data-cursor="KIRIM" href={social.submit} target="_blank" rel="noreferrer"><span>KIRIM KARYA / ARSIP</span><span>↗</span></a>
+        <a class="join-link" data-cursor="CHAT" href={social.whatsapp} target="_blank" rel="noreferrer"><span>WHATSAPP</span><span>↗</span></a>
+        <a class="join-link" data-cursor="KIRIM" href={`mailto:${social.email}`}><span>EMAIL</span><span>↗</span></a>
       </div>
     </section>
 
@@ -35,7 +37,7 @@ const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAA
         <noscript><img src={brand.joinQr} alt="QR untuk bergabung dengan SENIMEN" loading="lazy" decoding="async" /></noscript>
         <figcaption>QR GABUNG SENIMEN</figcaption>
       </figure>
-      <a class="join-brand-card" href={social.submit} target="_blank" rel="noreferrer">
+      <a class="join-brand-card" data-cursor="KIRIM" href={social.submit} target="_blank" rel="noreferrer">
         <img src={transparentPixel} data-defer-src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" width="520" height="520" loading="lazy" decoding="async" fetchpriority="low" />
         <noscript><img src={brand.submitQr} alt="QR untuk mengirim karya ke SENIMEN" loading="lazy" decoding="async" /></noscript>
         <span class="join-brand-caption">QR KIRIM KARYA / ARSIP ↗</span>
