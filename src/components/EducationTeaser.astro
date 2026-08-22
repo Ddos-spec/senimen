@@ -5,54 +5,205 @@ import { articleCovers } from '../data/articleCovers';
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 ---
-<section class="home-articles">
+<section class="home-articles editorial-wall">
   <div class="articles-head">
     <div>
       <div class="page-kicker">03 / ARTIKEL</div>
       <h2>CATATAN<br />SENIMEN.</h2>
     </div>
-    <a class="action-link magnetic" href={`${base}articles/`}>SEMUA ARTIKEL ↗</a>
+    <a class="action-link magnetic" data-cursor="BACA" href={`${base}articles/`}>SEMUA ARTIKEL ↗</a>
   </div>
-  <div class="article-preview-grid">
-    {articles.slice(0, 3).map((article) => {
+
+  <div class="editorial-wall-grid">
+    <div class="editorial-wall-rule" aria-hidden="true"><span>READING WALL</span><span>01—03 / 06</span></div>
+    {articles.slice(0, 3).map((article, index) => {
       const cover = articleCovers[article.slug] ?? `${base}${article.cover}`;
       return (
-        <a class="article-preview" href={`${base}articles/${article.slug}/`}>
+        <a class={`article-preview article-preview--${index + 1}`} data-cursor="BACA" href={`${base}articles/${article.slug}/`}>
           <div class="article-preview-media article-preview-media--full">
             <img
               src={transparentPixel}
               data-defer-src={cover}
               alt=""
-              width="1448"
-              height="1086"
+              width="1200"
+              height="900"
               loading="lazy"
               decoding="async"
               fetchpriority="low"
             />
             <noscript><img src={cover} alt="" loading="lazy" decoding="async" /></noscript>
+            <span class="article-preview-index">0{index + 1}</span>
           </div>
-          <span class="eyebrow">{article.eyebrow} · {article.readingTime}</span>
-          <h3>{article.title}</h3>
-          <p>{article.excerpt}</p>
-          <span class="read-more">BACA ARTIKEL ↗</span>
+          <div class="article-preview-copy">
+            <span class="eyebrow">{article.eyebrow} · {article.readingTime}</span>
+            <h3>{article.title}</h3>
+            <p>{article.excerpt}</p>
+            <span class="read-more">BACA ARTIKEL ↗</span>
+          </div>
         </a>
       );
     })}
+    <div class="editorial-wall-note" aria-hidden="true">CATATAN PRAKTIS / BUKAN MANIFESTO</div>
   </div>
 </section>
 
 <style>
+  .editorial-wall { position:relative; overflow:hidden; }
+  .editorial-wall-grid {
+    position:relative;
+    min-height:clamp(830px,76vw,1120px);
+    display:grid;
+    grid-template-columns:repeat(12,minmax(0,1fr));
+    grid-template-rows:auto 1fr;
+    border-top:1px solid var(--senimen-black);
+  }
+  .editorial-wall-rule {
+    grid-column:1/-1;
+    min-height:42px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 2px;
+    border-bottom:1px solid var(--senimen-black);
+    font:500 8px/1 var(--mono);
+    letter-spacing:.08em;
+  }
+  .editorial-wall-grid .article-preview {
+    position:absolute;
+    min-height:0;
+    padding:0;
+    border:0;
+    background:transparent;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  }
+  .article-preview--1 { width:52%; left:0; top:10%; }
+  .article-preview--2 { width:29%; right:2%; top:18%; transform:rotate(1.6deg); }
+  .article-preview--3 { width:38%; left:35%; bottom:2%; transform:rotate(-1.2deg); }
+  .article-preview--1:hover { transform:translateY(-8px); }
+  .article-preview--2:hover { transform:rotate(.4deg) translateY(-8px); }
+  .article-preview--3:hover { transform:rotate(-.2deg) translateY(-8px); }
+
   .article-preview-media--full {
-    aspect-ratio: 4 / 3;
-    display: grid;
-    place-items: center;
-    background: #111;
+    position:relative;
+    aspect-ratio:4/3;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    background:#111;
+    border:1px solid var(--senimen-black);
   }
   .article-preview-media--full img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    object-position:center;
+    filter:grayscale(1) contrast(1.03);
+    transition:filter .35s ease, transform .5s cubic-bezier(.2,.8,.2,1);
   }
-  .article-preview:hover .article-preview-media--full img { transform: none; }
+  .article-preview:hover .article-preview-media--full img {
+    filter:grayscale(.15) contrast(1.03);
+    transform:scale(.985);
+  }
+  .article-preview-index {
+    position:absolute;
+    left:8px;
+    top:8px;
+    width:34px;
+    height:24px;
+    display:grid;
+    place-items:center;
+    background:var(--senimen-pink);
+    border:1px solid var(--senimen-black);
+    font:600 8px/1 var(--mono);
+  }
+  .article-preview-copy {
+    padding:14px 2px 0;
+  }
+  .article-preview .eyebrow { font:500 8px/1.35 var(--mono); }
+  .article-preview h3 {
+    margin:12px 0 10px;
+    max-width:17ch;
+    font-size:clamp(28px,3.2vw,52px);
+    line-height:.96;
+    letter-spacing:-.055em;
+  }
+  .article-preview--2 h3 { font-size:clamp(24px,2.3vw,38px); }
+  .article-preview--3 h3 { font-size:clamp(25px,2.65vw,43px); }
+  .article-preview p { margin:0; max-width:52ch; font-size:13px; line-height:1.52; }
+  .article-preview .read-more { display:inline-block; margin-top:18px; padding-bottom:3px; border-bottom:1px solid currentColor; font:500 8px/1 var(--mono); }
+
+  .editorial-wall-note {
+    position:absolute;
+    z-index:-1;
+    right:0;
+    bottom:0;
+    color:rgba(5,5,5,.045);
+    font-weight:900;
+    font-size:clamp(68px,10vw,160px);
+    line-height:.76;
+    letter-spacing:-.08em;
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    pointer-events:none;
+  }
+
+  @supports (animation-timeline:view()) {
+    .article-preview--1,
+    .article-preview--2,
+    .article-preview--3 {
+      animation:articleFloat linear both;
+      animation-timeline:view();
+      animation-range:entry 0% cover 34%;
+    }
+    @keyframes articleFloat {
+      from { opacity:.15; translate:0 48px; }
+      to { opacity:1; translate:0 0; }
+    }
+  }
+
+  @media (max-width:900px) {
+    .editorial-wall-grid { min-height:930px; }
+    .article-preview--1 { width:57%; }
+    .article-preview--2 { width:34%; right:0; }
+    .article-preview--3 { width:45%; left:28%; }
+  }
+
+  @media (max-width:760px) {
+    .editorial-wall { padding-inline:18px; }
+    .editorial-wall-grid {
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:44px;
+      border:1px solid var(--senimen-black);
+    }
+    .editorial-wall-rule { padding-inline:12px; }
+    .editorial-wall-grid .article-preview,
+    .article-preview--1,
+    .article-preview--2,
+    .article-preview--3 {
+      position:relative;
+      inset:auto;
+      width:auto;
+      transform:none !important;
+      padding:14px;
+      border-bottom:1px solid var(--senimen-black);
+    }
+    .editorial-wall-grid .article-preview:last-of-type { border-bottom:0; }
+    .article-preview h3,
+    .article-preview--2 h3,
+    .article-preview--3 h3 { max-width:none; font-size:clamp(28px,8vw,40px); }
+    .article-preview p { font-size:14px; }
+    .editorial-wall-note { display:none; }
+    .article-preview:hover .article-preview-media--full img { filter:grayscale(1) contrast(1.03); transform:none; }
+  }
+
+  @media (max-width:480px) {
+    .editorial-wall { padding-inline:15px; }
+    .editorial-wall-grid { gap:0; }
+  }
+
+  @media (prefers-reduced-motion:reduce) {
+    .article-preview { animation:none !important; }
+  }
 </style>
