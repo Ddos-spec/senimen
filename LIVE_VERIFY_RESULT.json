@@ -1,0 +1,98 @@
+{
+  "status": "passed",
+  "source_sha": "0f46632d21b05c9fbfb0532ba4ac439b175b5c8e",
+  "checked_at": "2026-08-22T12:02:45.991Z",
+  "viewport": "390x844",
+  "checks": [
+    {
+      "name": "latest build is live",
+      "pass": true,
+      "detail": "live=0f46632d21b05c9fbfb0532ba4ac439b175b5c8e expected=0f46632d21b05c9fbfb0532ba4ac439b175b5c8e"
+    },
+    {
+      "name": "six article rows render",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "article cover uses WebP",
+      "pass": true,
+      "detail": "https://ddos-spec.github.io/senimen/images/articles/dokumentasi-proses-seni.webp"
+    },
+    {
+      "name": "article cover loads",
+      "pass": true,
+      "detail": "{\"src\":\"https://ddos-spec.github.io/senimen/images/articles/dokumentasi-proses-seni.webp\",\"loaded\":true,\"width\":1200,\"height\":900}"
+    },
+    {
+      "name": "article excerpt visible on phone",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "articles index: no horizontal overflow",
+      "pass": true,
+      "detail": "{\"scrollWidth\":390,\"innerWidth\":390}"
+    },
+    {
+      "name": "article detail cover uses WebP",
+      "pass": true,
+      "detail": "https://ddos-spec.github.io/senimen/images/articles/dokumentasi-proses-seni.webp"
+    },
+    {
+      "name": "article detail cover loads",
+      "pass": true,
+      "detail": "{\"src\":\"https://ddos-spec.github.io/senimen/images/articles/dokumentasi-proses-seni.webp\",\"loaded\":true,\"renderedWidth\":354,\"viewportWidth\":390}"
+    },
+    {
+      "name": "article detail image fits phone",
+      "pass": true,
+      "detail": "{\"src\":\"https://ddos-spec.github.io/senimen/images/articles/dokumentasi-proses-seni.webp\",\"loaded\":true,\"renderedWidth\":354,\"viewportWidth\":390}"
+    },
+    {
+      "name": "article detail: no horizontal overflow",
+      "pass": true,
+      "detail": "{\"scrollWidth\":390,\"innerWidth\":390}"
+    },
+    {
+      "name": "archive is one column at 390px",
+      "pass": true,
+      "detail": "columnCount=1"
+    },
+    {
+      "name": "archive viewer opens",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "archive close target is phone-safe",
+      "pass": true,
+      "detail": "{\"x\":312.1875,\"y\":9,\"width\":67.8125,\"height\":44}"
+    },
+    {
+      "name": "archive: no horizontal overflow",
+      "pass": true,
+      "detail": "{\"scrollWidth\":390,\"innerWidth\":390}"
+    },
+    {
+      "name": "menu tap target is usable",
+      "pass": true,
+      "detail": "{\"x\":307,\"y\":11.5,\"width\":68,\"height\":44}"
+    },
+    {
+      "name": "mobile menu opens",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile menu is exposed to accessibility tree",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "homepage: no horizontal overflow",
+      "pass": true,
+      "detail": "{\"scrollWidth\":390,\"innerWidth\":390}"
+    }
+  ]
+}
