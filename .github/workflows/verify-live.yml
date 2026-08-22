@@ -1,0 +1,228 @@
+name: Verify live SENIMEN
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: senimen-live-verification
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Wait for this commit to reach GitHub Pages
+        id: wait
+        continue-on-error: true
+        env:
+          BASE_URL: https://ddos-spec.github.io/senimen
+        shell: bash
+        run: |
+          set -u
+          expected="$GITHUB_SHA"
+          ready=false
+          for attempt in $(seq 1 48); do
+            html="$(curl -fsSL --max-time 20 -H 'Cache-Control: no-cache' "$BASE_URL/?verify=$GITHUB_SHA-$attempt" 2>/dev/null || true)"
+            live="$(printf '%s' "$html" | grep -o 'name="senimen-build" content="[^"]*"' | head -n 1 | sed 's/.*content="\([^"]*\)"/\1/' || true)"
+            if [ "$live" = "$expected" ]; then
+              ready=true
+              break
+            fi
+            sleep 10
+          done
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+          if [ "$ready" != "true" ]; then
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        if: steps.wait.outputs.ready == 'true'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install Playwright verifier
+        id: browser
+        if: steps.wait.outputs.ready == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          verify_dir="$RUNNER_TEMP/senimen-live-verify"
+          mkdir -p "$verify_dir"
+          cd "$verify_dir"
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.62.1 --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Run phone and live-content checks
+        id: smoke
+        if: steps.wait.outputs.ready == 'true' && steps.browser.outcome == 'success'
+        continue-on-error: true
+        env:
+          BASE_URL: https://ddos-spec.github.io/senimen
+          RESULT_PATH: ${{ github.workspace }}/LIVE_VERIFY_RESULT.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          verify_dir="$RUNNER_TEMP/senimen-live-verify"
+          cat > "$verify_dir/check.mjs" <<'NODE'
+          import { chromium } from 'playwright';
+          import { writeFile } from 'node:fs/promises';
+
+          const base = process.env.BASE_URL;
+          const expectedSha = process.env.GITHUB_SHA;
+          const resultPath = process.env.RESULT_PATH;
+          const checks = [];
+          const result = {
+            status: 'passed',
+            source_sha: expectedSha,
+            checked_at: new Date().toISOString(),
+            viewport: '390x844',
+            checks,
+          };
+
+          const record = (name, pass, detail = '') => {
+            checks.push({ name, pass, detail });
+            if (!pass) throw new Error(`${name}: ${detail || 'failed'}`);
+          };
+
+          const noHorizontalOverflow = async (page, label) => {
+            const values = await page.evaluate(() => ({
+              scrollWidth: document.documentElement.scrollWidth,
+              innerWidth: window.innerWidth,
+            }));
+            record(`${label}: no horizontal overflow`, values.scrollWidth <= values.innerWidth + 2, JSON.stringify(values));
+          };
+
+          let browser;
+          try {
+            browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({
+              viewport: { width: 390, height: 844 },
+              deviceScaleFactor: 1,
+              isMobile: true,
+              hasTouch: true,
+            });
+            const page = await context.newPage();
+
+            await page.goto(`${base}/articles/?verify=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+            await page.locator('.article-row').first().waitFor({ state: 'visible', timeout: 30000 });
+            const buildSha = await page.locator('meta[name="senimen-build"]').getAttribute('content');
+            record('latest build is live', buildSha === expectedSha, `live=${buildSha} expected=${expectedSha}`);
+            record('six article rows render', await page.locator('.article-row').count() === 6);
+            const firstCover = page.locator('.article-row-media img').first();
+            await firstCover.waitFor({ state: 'visible' });
+            const coverState = await firstCover.evaluate((img) => ({
+              src: img.currentSrc || img.src,
+              loaded: img.complete && img.naturalWidth > 0,
+              width: img.naturalWidth,
+              height: img.naturalHeight,
+            }));
+            record('article cover uses WebP', coverState.src.includes('/images/articles/') && coverState.src.endsWith('.webp'), coverState.src);
+            record('article cover loads', coverState.loaded, JSON.stringify(coverState));
+            record('article excerpt visible on phone', await page.locator('.article-row p').first().isVisible());
+            await noHorizontalOverflow(page, 'articles index');
+
+            await page.goto(`${base}/articles/dokumentasi-proses-seni/?verify=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+            await page.locator('.article-hero h1').waitFor({ state: 'visible' });
+            const detailCover = page.locator('.article-cover--full img');
+            await detailCover.waitFor({ state: 'visible' });
+            const detailState = await detailCover.evaluate((img) => ({
+              src: img.currentSrc || img.src,
+              loaded: img.complete && img.naturalWidth > 0,
+              renderedWidth: img.getBoundingClientRect().width,
+              viewportWidth: window.innerWidth,
+            }));
+            record('article detail cover uses WebP', detailState.src.endsWith('.webp'), detailState.src);
+            record('article detail cover loads', detailState.loaded, JSON.stringify(detailState));
+            record('article detail image fits phone', detailState.renderedWidth <= detailState.viewportWidth + 1, JSON.stringify(detailState));
+            await noHorizontalOverflow(page, 'article detail');
+
+            await page.goto(`${base}/archive/?verify=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+            const masonry = page.locator('.archive-drive-masonry');
+            await masonry.waitFor({ state: 'visible' });
+            const columnCount = await masonry.evaluate((el) => getComputedStyle(el).columnCount);
+            record('archive is one column at 390px', columnCount === '1', `columnCount=${columnCount}`);
+            const firstArchive = page.locator('.archive-pin-trigger').first();
+            await firstArchive.waitFor({ state: 'visible' });
+            await firstArchive.click();
+            const viewer = page.locator('#archive-viewer');
+            await viewer.waitFor({ state: 'visible' });
+            const closeButton = page.locator('.archive-viewer-close');
+            const closeBox = await closeButton.boundingBox();
+            record('archive viewer opens', await viewer.evaluate((el) => el.hasAttribute('open')));
+            record('archive close target is phone-safe', !!closeBox && closeBox.width >= 44 && closeBox.height >= 44, JSON.stringify(closeBox));
+            await noHorizontalOverflow(page, 'archive');
+
+            await page.goto(`${base}/?verify=${Date.now()}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+            const menuToggle = page.locator('.menu-toggle');
+            await menuToggle.waitFor({ state: 'visible' });
+            const toggleBox = await menuToggle.boundingBox();
+            record('menu tap target is usable', !!toggleBox && toggleBox.height >= 44, JSON.stringify(toggleBox));
+            await menuToggle.click();
+            record('mobile menu opens', await menuToggle.getAttribute('aria-expanded') === 'true');
+            record('mobile menu is exposed to accessibility tree', await page.locator('#site-menu').getAttribute('aria-hidden') === 'false');
+            await noHorizontalOverflow(page, 'homepage');
+
+            await context.close();
+          } catch (error) {
+            result.status = 'failed';
+            result.error = error instanceof Error ? error.message : String(error);
+          } finally {
+            if (browser) await browser.close().catch(() => {});
+            await writeFile(resultPath, JSON.stringify(result, null, 2) + '\n');
+          }
+
+          if (result.status !== 'passed') process.exitCode = 1;
+          NODE
+          cd "$verify_dir"
+          node check.mjs
+
+      - name: Write fallback verification result
+        if: always()
+        env:
+          WAIT_OUTCOME: ${{ steps.wait.outcome }}
+          READY: ${{ steps.wait.outputs.ready }}
+          BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+          SMOKE_OUTCOME: ${{ steps.smoke.outcome }}
+        shell: bash
+        run: |
+          if [ -f LIVE_VERIFY_RESULT.json ]; then
+            exit 0
+          fi
+          cat > LIVE_VERIFY_RESULT.json <<EOF
+          {
+            "status": "infra_failed",
+            "source_sha": "$GITHUB_SHA",
+            "checked_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "wait_outcome": "$WAIT_OUTCOME",
+            "deployment_ready": "$READY",
+            "browser_outcome": "$BROWSER_OUTCOME",
+            "smoke_outcome": "$SMOKE_OUTCOME"
+          }
+          EOF
+
+      - name: Publish verification result to verification branch
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp LIVE_VERIFY_RESULT.json "$RUNNER_TEMP/LIVE_VERIFY_RESULT.json"
+          git config user.name "senimen-live-check"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout --orphan verification-result
+          git rm -rf . >/dev/null 2>&1 || true
+          cp "$RUNNER_TEMP/LIVE_VERIFY_RESULT.json" LIVE_VERIFY_RESULT.json
+          git add LIVE_VERIFY_RESULT.json
+          git commit -m "Live verification for $GITHUB_SHA"
+          git push --force origin HEAD:verification-result
