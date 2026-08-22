@@ -4,38 +4,245 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
 const thumb = (id: string, width: number) => `https://drive.google.com/thumbnail?id=${id}&sz=w${width}`;
 const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 ---
-<section class="featured-strip">
+<section class="featured-strip featured-collage-section">
   <div class="featured-head">
     <div>
       <div class="page-kicker">02 / ARSIP</div>
       <h2>PILIHAN<br />DARI ARSIP.</h2>
     </div>
-    <a class="action-link magnetic" href={`${base}archive/`}>BUKA ARSIP ↗</a>
+    <a class="action-link magnetic" data-cursor="BUKA" href={`${base}archive/`}>BUKA ARSIP ↗</a>
   </div>
-  <div class="featured-grid">
+
+  <div class="featured-canvas" aria-label="Pilihan dari arsip SENIMEN">
+    <div class="featured-canvas-word" aria-hidden="true">ARSIP</div>
+    <div class="featured-canvas-note featured-canvas-note--a" aria-hidden="true">BUKAN GALERI RAPI.<br />INI POTONGAN YANG MASIH NYAMBUNG.</div>
+    <div class="featured-canvas-note featured-canvas-note--b" aria-hidden="true">TANGERANG / 2026<br />001—006</div>
+
     {featuredMedia.map((item, index) => {
-      const src = thumb(item.id, 360);
-      const srcset = `${thumb(item.id, 260)} 260w, ${src} 360w, ${thumb(item.id, 460)} 460w`;
+      const src = thumb(item.id, 520);
+      const srcset = `${thumb(item.id, 300)} 300w, ${thumb(item.id, 420)} 420w, ${src} 520w, ${thumb(item.id, 720)} 720w`;
       return (
-        <figure class="featured-card reveal-card">
-          <a href={`${base}archive/`} class="featured-drive-image" aria-label="Buka arsip SENIMEN">
+        <figure class={`featured-card featured-card--${index + 1} reveal-card`} data-speed={index % 2 === 0 ? '-0.01' : '0.008'}>
+          <a href={`${base}archive/`} class="featured-drive-image" data-cursor="LIHAT" aria-label={`Buka ${item.group} di arsip SENIMEN`}>
             <img
               src={transparentPixel}
               data-defer-src={src}
               data-defer-srcset={srcset}
-              data-defer-sizes="(max-width: 480px) 78vw, (max-width: 760px) 46vw, 28vw"
+              data-defer-sizes="(max-width: 480px) 92vw, (max-width: 760px) 48vw, 45vw"
               alt={`${item.group} — ${item.title}`}
-              width="360"
-              height="450"
+              width="520"
+              height="650"
               loading="lazy"
               decoding="async"
               fetchpriority="low"
             />
             <noscript><img src={src} alt={`${item.group} — ${item.title}`} loading="lazy" decoding="async" /></noscript>
+            <span class="featured-card-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
           </a>
-          <figcaption><span>{item.group}</span><span>{String(index + 1).padStart(2, '0')}</span></figcaption>
+          <figcaption><span>{item.group}</span><span>{item.title}</span></figcaption>
         </figure>
       );
     })}
   </div>
 </section>
+
+<style>
+  .featured-collage-section {
+    position:relative;
+    overflow:hidden;
+    padding-bottom:clamp(90px,10vw,150px);
+  }
+  .featured-canvas {
+    position:relative;
+    min-height:clamp(980px,92vw,1360px);
+    max-width:1540px;
+    margin:0 auto;
+    isolation:isolate;
+  }
+  .featured-canvas::before,
+  .featured-canvas::after {
+    content:'';
+    position:absolute;
+    z-index:-1;
+    pointer-events:none;
+  }
+  .featured-canvas::before {
+    inset:7% 5% 12%;
+    border:1px solid rgba(5,5,5,.13);
+  }
+  .featured-canvas::after {
+    left:50%;
+    top:0;
+    bottom:0;
+    width:1px;
+    background:rgba(5,5,5,.1);
+  }
+  .featured-canvas-word {
+    position:absolute;
+    z-index:-2;
+    left:-2%;
+    top:28%;
+    color:rgba(5,5,5,.035);
+    font-weight:900;
+    font-size:clamp(150px,28vw,480px);
+    line-height:.72;
+    letter-spacing:-.105em;
+    pointer-events:none;
+    user-select:none;
+  }
+  .featured-canvas-note {
+    position:absolute;
+    z-index:2;
+    max-width:180px;
+    padding:10px 11px;
+    border:1px solid var(--senimen-black);
+    background:var(--senimen-white);
+    font:500 7px/1.45 var(--mono);
+    letter-spacing:.05em;
+  }
+  .featured-canvas-note--a { left:47%; top:22%; transform:rotate(-3deg); }
+  .featured-canvas-note--b { right:9%; bottom:12%; transform:rotate(2deg); }
+
+  .featured-card {
+    position:absolute;
+    z-index:3;
+    margin:0 !important;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1), z-index 0s;
+  }
+  .featured-card:hover { z-index:9; }
+  .featured-card--1 { width:47%; left:1%; top:1%; transform:rotate(-1.8deg); }
+  .featured-card--2 { width:26%; right:3%; top:4%; transform:rotate(3deg); }
+  .featured-card--3 { width:31%; left:13%; top:37%; transform:rotate(2.2deg); }
+  .featured-card--4 { width:46%; right:-1%; top:41%; transform:rotate(-2.2deg); }
+  .featured-card--5 { width:24%; left:1%; top:68%; transform:rotate(-3deg); }
+  .featured-card--6 { width:36%; left:39%; top:72%; transform:rotate(1.8deg); }
+
+  .featured-card:hover.featured-card--1 { transform:rotate(-.4deg) translateY(-8px); }
+  .featured-card:hover.featured-card--2 { transform:rotate(1.4deg) translateY(-8px); }
+  .featured-card:hover.featured-card--3 { transform:rotate(.7deg) translateY(-8px); }
+  .featured-card:hover.featured-card--4 { transform:rotate(-.8deg) translateY(-8px); }
+  .featured-card:hover.featured-card--5 { transform:rotate(-1.2deg) translateY(-8px); }
+  .featured-card:hover.featured-card--6 { transform:rotate(.4deg) translateY(-8px); }
+
+  .featured-drive-image {
+    position:relative;
+    display:block;
+    overflow:hidden;
+    background:#111;
+    border:1px solid var(--senimen-black);
+    box-shadow:0 18px 42px rgba(0,0,0,.11);
+  }
+  .featured-card:nth-child(n) .featured-drive-image { aspect-ratio:auto; }
+  .featured-card--1 .featured-drive-image,
+  .featured-card--4 .featured-drive-image { aspect-ratio:16/10; }
+  .featured-card--2 .featured-drive-image,
+  .featured-card--5 .featured-drive-image { aspect-ratio:4/5; }
+  .featured-card--3 .featured-drive-image { aspect-ratio:1/1; }
+  .featured-card--6 .featured-drive-image { aspect-ratio:3/2; }
+  .featured-drive-image img {
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    filter:grayscale(1) contrast(1.04);
+    transition:transform .6s cubic-bezier(.2,.8,.2,1), filter .35s ease;
+  }
+  .featured-card:hover .featured-drive-image img {
+    transform:scale(1.035);
+    filter:grayscale(.15) contrast(1.03);
+  }
+  .featured-card-index {
+    position:absolute;
+    right:8px;
+    top:8px;
+    min-width:34px;
+    height:24px;
+    display:grid;
+    place-items:center;
+    background:var(--senimen-pink);
+    border:1px solid var(--senimen-black);
+    font:600 8px/1 var(--mono);
+  }
+  .featured-card figcaption {
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    gap:14px;
+    padding:8px 2px 0;
+    font:500 8px/1.25 var(--mono);
+  }
+  .featured-card figcaption span:last-child {
+    min-width:0;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    text-align:right;
+    color:#777;
+  }
+
+  @supports (animation-timeline:view()) {
+    .featured-card {
+      animation:featuredReveal linear both;
+      animation-timeline:view();
+      animation-range:entry 0% cover 34%;
+    }
+    @keyframes featuredReveal {
+      from { opacity:.2; translate:0 70px; }
+      to { opacity:1; translate:0 0; }
+    }
+  }
+
+  @media (max-width:900px) {
+    .featured-canvas { min-height:1180px; }
+    .featured-card--1 { width:55%; }
+    .featured-card--2 { width:31%; }
+    .featured-card--3 { width:38%; left:5%; top:36%; }
+    .featured-card--4 { width:53%; top:43%; }
+    .featured-card--5 { width:30%; }
+    .featured-card--6 { width:44%; left:34%; top:74%; }
+    .featured-canvas-note--a { left:45%; top:27%; }
+  }
+
+  @media (max-width:760px) {
+    .featured-collage-section { padding-inline:18px; }
+    .featured-canvas {
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:42px 10px;
+    }
+    .featured-canvas::before,
+    .featured-canvas::after,
+    .featured-canvas-word,
+    .featured-canvas-note { display:none; }
+    .featured-card,
+    .featured-card--1,
+    .featured-card--2,
+    .featured-card--3,
+    .featured-card--4,
+    .featured-card--5,
+    .featured-card--6 {
+      position:relative;
+      inset:auto;
+      width:auto;
+      transform:none !important;
+    }
+    .featured-card:nth-child(even) { margin-top:54px !important; }
+    .featured-card:nth-child(n) .featured-drive-image { aspect-ratio:4/5; }
+    .featured-card figcaption { grid-template-columns:1fr; gap:4px; font-size:7px; }
+    .featured-card figcaption span:last-child { text-align:left; }
+    .featured-card:hover .featured-drive-image img { transform:none; filter:grayscale(1) contrast(1.04); }
+  }
+
+  @media (max-width:480px) {
+    .featured-collage-section { padding-inline:15px; }
+    .featured-canvas { grid-template-columns:1fr; gap:44px; }
+    .featured-card:nth-child(even) { margin-top:0 !important; margin-left:12vw !important; }
+    .featured-card:nth-child(odd) { margin-right:8vw !important; }
+    .featured-card:nth-child(n) .featured-drive-image { aspect-ratio:auto; }
+    .featured-drive-image img { height:auto; aspect-ratio:auto; }
+  }
+
+  @media (prefers-reduced-motion:reduce) {
+    .featured-card { animation:none !important; }
+  }
+</style>
