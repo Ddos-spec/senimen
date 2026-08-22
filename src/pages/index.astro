@@ -9,32 +9,220 @@ const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL :
 const marquee = [...ticker, 'SKETSA', 'OBROLAN', 'ACARA', ...ticker, 'PROSES', 'CATATAN', 'KARYA'];
 ---
 <BaseLayout>
-  <main class="page">
+  <main class="page home-page-art">
     <HomeHero />
 
     <section class="home-marquee" aria-label="Isi SENIMEN">
       <div class="home-marquee-track">{marquee.map((item) => <><span>{item}</span><span>✦</span></>)}</div>
     </section>
 
-    <section class="home-intro">
-      <div class="page-kicker">01 / TENTANG SENIMEN</div>
-      <div>
+    <section class="home-intro home-intro-art">
+      <div class="home-intro-side">
+        <div class="page-kicker">01 / TENTANG SENIMEN</div>
+        <div class="home-intro-index" aria-hidden="true">
+          <span>01</span><i></i><span>04</span>
+        </div>
+      </div>
+      <div class="home-intro-main">
         <h2>KARYA, PROSES, DAN KEGIATAN DI SATU ARSIP.</h2>
         <div class="home-intro-copy">Di sini ada dokumentasi acara, karya anggota, sketsa, rekaman, potongan video, dan materi proses lain. Sebagian sudah selesai, sebagian masih berjalan. Semuanya disimpan supaya konteksnya tetap bisa dicari lagi.</div>
+        <div class="home-intro-marginalia" aria-hidden="true">SENIMEN / TANGERANG / ARSIP YANG TERUS BERTAMBAH</div>
       </div>
     </section>
 
     <FeaturedArchive />
 
-    <section class="pink-manifesto"><p>KARYA.<br />PROSES.<br /><em>ARSIP.</em></p></section>
+    <section class="pink-manifesto kinetic-manifesto" aria-label="Karya, proses, arsip">
+      <div class="kinetic-meta"><span>SENIMEN / INDEX 003</span><span>SCROLL UNTUK LANJUT ↓</span></div>
+      <div class="kinetic-line kinetic-line--one"><span>KARYA</span><i>↗</i><span>KARYA</span></div>
+      <div class="kinetic-line kinetic-line--two"><span>PROSES</span><i>✦</i><span>PROSES</span></div>
+      <div class="kinetic-line kinetic-line--three"><span>ARSIP</span><i>↓</i><span>ARSIP</span></div>
+      <div class="kinetic-corner" aria-hidden="true">TIDAK HARUS<br />SELESAI DULU.</div>
+    </section>
 
     <EducationTeaser />
 
-    <section class="route-hero" style="background:#f70bbd;border-bottom:0">
+    <section class="route-hero join-poster">
+      <div class="join-poster-number" aria-hidden="true">04</div>
       <div class="route-hero-grid">
         <div><span class="page-kicker">04 / GABUNG</span><h2 class="page-title">GABUNG<br />SENIMEN.</h2></div>
-        <div><p class="page-lead">Mau kirim karya, masukin dokumentasi ke arsip, ngajak kolaborasi, atau ngobrol soal acara? Pilih jalurnya di halaman gabung.</p><div style="margin-top:28px"><a class="action-link magnetic" href={`${base}join/`}>LIHAT CARA GABUNG ↗</a></div></div>
+        <div class="join-poster-copy"><p class="page-lead">Mau kirim karya, masukin dokumentasi ke arsip, ngajak kolaborasi, atau ngobrol soal acara? Pilih jalurnya di halaman gabung.</p><div style="margin-top:28px"><a class="action-link magnetic" data-cursor="MASUK" href={`${base}join/`}>LIHAT CARA GABUNG ↗</a></div></div>
       </div>
+      <div class="join-poster-footer" aria-hidden="true"><span>OPEN SUBMISSION</span><span>TANGERANG / INDONESIA</span><span>SENIMEN</span></div>
     </section>
   </main>
 </BaseLayout>
+
+<style>
+  .home-page-art { overflow:hidden; }
+
+  .home-intro-art {
+    position:relative;
+    grid-template-columns:minmax(130px,.42fr) minmax(0,1.58fr);
+    overflow:hidden;
+  }
+  .home-intro-side { display:grid; align-content:space-between; gap:60px; min-height:100%; }
+  .home-intro-index {
+    width:76px;
+    display:grid;
+    gap:7px;
+    font:500 8px/1 var(--mono);
+  }
+  .home-intro-index i { height:1px; background:var(--senimen-black); }
+  .home-intro-main { position:relative; }
+  .home-intro-main::before {
+    content:'';
+    position:absolute;
+    left:-4vw;
+    top:-12%;
+    bottom:-12%;
+    width:1px;
+    background:rgba(5,5,5,.15);
+  }
+  .home-intro-main h2 { position:relative; z-index:1; }
+  .home-intro-marginalia {
+    position:absolute;
+    right:-2%;
+    top:2%;
+    writing-mode:vertical-rl;
+    font:500 7px/1 var(--mono);
+    letter-spacing:.1em;
+    color:#777;
+  }
+
+  .kinetic-manifesto {
+    position:relative;
+    min-height:clamp(560px,68vw,940px);
+    padding:clamp(52px,6vw,84px) 0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:0;
+    overflow:hidden;
+    border-block:1px solid var(--senimen-black);
+  }
+  .kinetic-meta {
+    position:absolute;
+    inset:24px var(--page-pad) auto;
+    z-index:3;
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    font:600 8px/1 var(--mono);
+    letter-spacing:.08em;
+  }
+  .kinetic-line {
+    width:max-content;
+    display:flex;
+    align-items:center;
+    gap:clamp(28px,4vw,74px);
+    font-weight:900;
+    font-size:clamp(82px,16vw,260px);
+    line-height:.72;
+    letter-spacing:-.095em;
+    white-space:nowrap;
+    text-transform:uppercase;
+    will-change:transform;
+  }
+  .kinetic-line i {
+    width:clamp(48px,6vw,90px);
+    height:clamp(48px,6vw,90px);
+    display:grid;
+    place-items:center;
+    border:1px solid var(--senimen-black);
+    border-radius:50%;
+    font:500 clamp(18px,2vw,32px)/1 var(--mono);
+    letter-spacing:0;
+  }
+  .kinetic-line--one { transform:translateX(-12%); }
+  .kinetic-line--two { transform:translateX(-2%); color:var(--senimen-white); }
+  .kinetic-line--three { transform:translateX(-20%); }
+  .kinetic-corner {
+    position:absolute;
+    right:var(--page-pad);
+    bottom:28px;
+    padding:10px 12px;
+    border:1px solid var(--senimen-black);
+    background:var(--senimen-white);
+    color:var(--senimen-black);
+    transform:rotate(2deg);
+    font:600 8px/1.35 var(--mono);
+  }
+
+  @supports (animation-timeline:view()) {
+    .kinetic-line--one { animation:kineticLeft linear both; animation-timeline:view(); animation-range:entry 0% exit 100%; }
+    .kinetic-line--two { animation:kineticRight linear both; animation-timeline:view(); animation-range:entry 0% exit 100%; }
+    .kinetic-line--three { animation:kineticLeftSoft linear both; animation-timeline:view(); animation-range:entry 0% exit 100%; }
+    @keyframes kineticLeft { from { translate:7vw 0; } to { translate:-8vw 0; } }
+    @keyframes kineticRight { from { translate:-7vw 0; } to { translate:9vw 0; } }
+    @keyframes kineticLeftSoft { from { translate:4vw 0; } to { translate:-5vw 0; } }
+  }
+
+  .join-poster {
+    position:relative;
+    background:var(--senimen-pink);
+    border-bottom:0;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .join-poster::before {
+    content:'';
+    position:absolute;
+    z-index:-1;
+    inset:0;
+    background:repeating-linear-gradient(90deg,transparent 0 calc(12.5% - 1px),rgba(5,5,5,.12) calc(12.5% - 1px) 12.5%);
+  }
+  .join-poster-number {
+    position:absolute;
+    z-index:-1;
+    right:-.04em;
+    bottom:-.22em;
+    color:rgba(255,255,255,.25);
+    font-weight:900;
+    font-size:clamp(220px,35vw,560px);
+    line-height:.8;
+    letter-spacing:-.11em;
+  }
+  .join-poster-copy { align-self:end; }
+  .join-poster-footer {
+    margin-top:clamp(46px,6vw,80px);
+    padding-top:14px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    border-top:1px solid var(--senimen-black);
+    font:600 8px/1 var(--mono);
+    letter-spacing:.07em;
+  }
+  .join-poster-footer span:nth-child(2) { text-align:center; }
+  .join-poster-footer span:last-child { text-align:right; }
+
+  @media (max-width:760px) {
+    .home-intro-art { grid-template-columns:1fr; }
+    .home-intro-side { min-height:0; gap:22px; }
+    .home-intro-index { display:none; }
+    .home-intro-main::before, .home-intro-marginalia { display:none; }
+
+    .kinetic-manifesto { min-height:440px; padding-block:72px; }
+    .kinetic-meta { inset:18px 18px auto; font-size:7px; }
+    .kinetic-meta span:last-child { display:none; }
+    .kinetic-line { font-size:clamp(72px,24vw,120px); gap:22px; }
+    .kinetic-line i { width:46px; height:46px; flex:0 0 46px; font-size:17px; }
+    .kinetic-line--one { transform:translateX(-22%); }
+    .kinetic-line--two { transform:translateX(-8%); }
+    .kinetic-line--three { transform:translateX(-30%); }
+    .kinetic-corner { right:18px; bottom:18px; font-size:7px; }
+
+    .join-poster-footer { grid-template-columns:1fr auto; gap:12px; }
+    .join-poster-footer span:nth-child(2) { display:none; }
+    .join-poster-number { font-size:70vw; }
+  }
+
+  @media (max-width:420px) {
+    .kinetic-meta { inset-inline:15px; }
+    .kinetic-corner { right:15px; }
+  }
+
+  @media (prefers-reduced-motion:reduce) {
+    .kinetic-line { animation:none !important; }
+  }
+</style>
