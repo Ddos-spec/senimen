@@ -10,8 +10,11 @@ function initSenimen() {
   const menu = document.querySelector<HTMLElement>('.menu');
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
   const cursor = document.querySelector<HTMLElement>('.cursor');
+  const cursorLabel = cursor?.querySelector<HTMLElement>('span');
   const progress = document.querySelector<HTMLElement>('.progress i');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(pointer:fine)').matches;
+  const enableParallax = !reducedMotion && window.matchMedia('(min-width: 761px)').matches;
   const observers: IntersectionObserver[] = [];
   const speedElements = [...document.querySelectorAll<HTMLElement>('[data-speed]')];
 
@@ -63,7 +66,7 @@ function initSenimen() {
   }
 
   let cursorFrame = 0;
-  if (!reducedMotion && cursor && window.matchMedia('(pointer:fine)').matches) {
+  if (!reducedMotion && cursor && finePointer) {
     let cx = innerWidth / 2;
     let cy = innerHeight / 2;
     let tx = cx;
@@ -86,6 +89,18 @@ function initSenimen() {
     document.querySelectorAll<HTMLElement>('a, button, .media-slot').forEach((element) => {
       element.addEventListener('pointerenter', () => cursor.classList.add('active'), { signal });
       element.addEventListener('pointerleave', () => cursor.classList.remove('active'), { signal });
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-cursor]').forEach((element) => {
+      element.addEventListener('pointerenter', () => {
+        const label = element.dataset.cursor?.trim() || '';
+        if (cursorLabel) cursorLabel.textContent = label;
+        cursor.classList.toggle('has-label', Boolean(label));
+      }, { signal });
+      element.addEventListener('pointerleave', () => {
+        cursor.classList.remove('has-label');
+        if (cursorLabel) cursorLabel.textContent = '';
+      }, { signal });
     });
 
     document.querySelectorAll<HTMLElement>('.magnetic').forEach((element) => {
@@ -125,12 +140,12 @@ function initSenimen() {
       else header.classList.remove('hide');
     }
 
-    if (!reducedMotion) {
+    if (enableParallax) {
       speedElements.forEach((element) => {
         const speed = Number(element.dataset.speed || 0);
         const rect = element.getBoundingClientRect();
         const offset = (rect.top - innerHeight / 2) * speed;
-        element.style.transform = `translate3d(0, ${offset}px, 0)`;
+        element.style.translate = `0 ${offset}px`;
       });
     }
 
@@ -218,6 +233,7 @@ function initSenimen() {
     controller.abort();
     observers.forEach((observer) => observer.disconnect());
     if (cursorFrame) cancelAnimationFrame(cursorFrame);
+    speedElements.forEach((element) => { element.style.translate = ''; });
     body.classList.remove('menu-open');
     if (menu) {
       menu.inert = true;
