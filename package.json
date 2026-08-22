@@ -4,9 +4,9 @@
   "private": true,
   "description": "SENIMEN — komunitas seni & kreatif independen Tangerang.",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
+    "dev": "node scripts/optimize-article-covers.mjs && astro dev",
+    "start": "node scripts/optimize-article-covers.mjs && astro dev",
+    "build": "node scripts/optimize-article-covers.mjs && astro build",
     "preview": "astro preview",
     "scrape:instagram": "node scrape_ig.js"
   },
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "astro": "7.1.6",
-    "playwright": "^1.62.1"
+    "playwright": "^1.62.1",
+    "sharp": "^0.34.3"
   }
 }
