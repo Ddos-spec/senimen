@@ -1,0 +1,62 @@
+/* Final art-direction layer. Keep interaction expressive on fine pointers and inert on touch. */
+
+@media (hover: hover) and (pointer: fine) {
+  .cursor {
+    width: 14px;
+    height: 14px;
+    display: grid;
+    place-items: center;
+    background: var(--senimen-pink);
+    border: 1px solid var(--senimen-black);
+    color: var(--senimen-black);
+    mix-blend-mode: normal;
+    overflow: hidden;
+    transition: width .24s ease, height .24s ease, background .24s ease, color .24s ease, border-radius .24s ease;
+  }
+
+  .cursor span {
+    opacity: 0;
+    transform: scale(.75);
+    font: 600 8px/1 var(--mono);
+    letter-spacing: .06em;
+    white-space: nowrap;
+    transition: opacity .16s ease, transform .2s ease;
+  }
+
+  .cursor.active {
+    width: 42px;
+    height: 42px;
+    background: rgba(247,11,189,.92);
+  }
+
+  .cursor.has-label {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--senimen-pink);
+  }
+
+  .cursor.has-label span {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  [data-cursor] { cursor: none; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor { display: none !important; }
+  [data-cursor] { cursor: auto; }
+}
+
+/* Give focus the same intentionality as hover without relying on cursor effects. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--senimen-pink);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor,
+  .cursor span { transition: none !important; }
+}
