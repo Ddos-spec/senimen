@@ -3,11 +3,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { brand } from '../data/brand';
 ---
 <BaseLayout title="Tentang SENIMEN — Komunitas Seni & Kreatif Independen" description="SENIMEN adalah komunitas seni dan kreatif independen di Tangerang yang bergerak lewat karya, acara, dokumentasi, dan kolaborasi." image={brand.og}>
-  <main class="page">
+  <main class="page about-page">
     <section class="route-hero">
       <div class="route-hero-grid">
         <div><span class="page-kicker">TENTANG / SENIMEN</span><h1 class="page-title">TENTANG<br />SENIMEN.</h1></div>
         <p class="page-lead">SENIMEN adalah komunitas seni dan kreatif independen di Tangerang. Kegiatannya jalan lewat karya, acara, dokumentasi, dan kolaborasi dengan orang atau ruang lain.</p>
+      </div>
+
+      <div class="about-collage" aria-hidden="true">
+        <figure class="reveal-card">
+          <img src={brand.tanyaTanya} alt="" width="480" height="480" loading="eager" decoding="async" />
+          <figcaption>WAWANCARA / ARSIP</figcaption>
+        </figure>
+        <figure class="reveal-card">
+          <img src={brand.collab} alt="" width="720" height="720" loading="lazy" decoding="async" />
+          <figcaption>KOLABORASI / SENIMEN</figcaption>
+        </figure>
+        <figure class="reveal-card">
+          <img src={brand.balikLayar} alt="" width="480" height="480" loading="lazy" decoding="async" />
+          <figcaption>BALIK LAYAR</figcaption>
+        </figure>
       </div>
     </section>
 
