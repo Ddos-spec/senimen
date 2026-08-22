@@ -27,7 +27,7 @@ const coverFor = (article: (typeof articles)[number]) => articleCovers[article.s
                 alt={`Cover ${article.title}`}
                 width="1448"
                 height="1086"
-                loading={index < 2 ? 'eager' : 'lazy'}
+                loading={index === 0 ? 'eager' : 'lazy'}
                 decoding="async"
                 fetchpriority={index === 0 ? 'high' : 'low'}
               />
